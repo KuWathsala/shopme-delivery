@@ -3,7 +3,7 @@ import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,Alert,Linking,Keyb
 import {connect} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import * as actions from '../Store/Actions/index';
-import {Field,reduxForm} from 'redux-form';
+import {Field,reduxForm,getFormValues,submit} from 'redux-form';
 
 const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,error,warning},input:{onChange, ...restInput}})=>{
     return(<View style={{flexDirection:'column',height:70,alignItems:'flex-start'}}>
@@ -18,24 +18,25 @@ const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,erro
 const required=value=> value ? undefined:'Required';
 const isValidEmail=value=> value && !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(value) ? 'Invalid email address':undefined;
 const isValidPassword=value=> value && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i.test(value) ? 'Password must contain UPPERCASE lowercase and numbers':undefined;
+const passwordMatch=(value,allValues)=> value!==allValues.Password ? 'Passwords do not Match':undefined;
 
-
-class ContactForm extends Component{
+class RegisterForm extends Component{
     constructor(props) {
         super(props);
         state = {
-          email   : '',
-          password: '',
         }
       }
+    
 
-    handleSubmit=()=>{
+    handleSubmit=(values)=>{
         //onAuth(this.state.email,this.state.password);
-        Actions.Map();
-        this.props.onAuth(this.state.email,this.state.password)
+        console.log(values);
+        //this.props.onAuth(this.state.email,this.state.password)
        
         
     }
+
+
     handleRegister=()=>{
         Alert.alert(
             'Register ? ',
@@ -50,61 +51,40 @@ class ContactForm extends Component{
     }
 
     render(){
-        
+        // const submit=value=>{
+        //     console.log(value)
+        //     Alert.alert(`validation successful ${JSON.stringify(value)}`);
+        // }
+        const {submitting,handleSubmit,onSubmit}=this.props;
+        console.log(submitting);
         return(
-            
-            // <View style={styles.container}>
-            // <View style={{alignContent:"center"}}>
-            //     <View style={{alignItems:'center'}}> 
-            //         <Image source={require('../../Assets/logo.png')} style={{width:'50%',height:60,marginTop:10,marginRight:'5%',borderRadius:15}}/>
-            //             <Text style={{fontSize:40,color:"steelblue",paddingTop:'25%',paddingBottom:'30%',fontWeight:'bold'}}>Welcome,  Ready to Ride ? </Text>               
-                        
-                            
-            //             <TextInput style={styles.Input} 
-            //                 placeholder='Email'
-            //                 keyboardType="email-address" 
-            //                 underlineColorAndroid='transparent'
-            //                 onChangeText={(email) => this.setState({email})}
-            //                 />
-            //             <TextInput style={styles.Input} 
-            //                 placeholder='Password' 
-            //                 secureTextEntry={true} 
-            //                 underlineColorAndroid='transparent'
-            //                 onChangeText={(password) => this.setState({password})}
-            //                 />
-
-            //         <TouchableOpacity onPress={()=>this.handleSubmit()} style={{margin:10,alignSelf:'stretch'}}>
-            //             <Text style={{
-            //                 backgroundColor:'steelblue',color:'white',fontSize:16,
-            //                 height:37,width:'100%',textAlign:'center',padding:10
-            //             }}>Log In</Text>
-            //         </TouchableOpacity>
-
-            //         <TouchableOpacity onPress={()=>this.handleRegister()} style={{margin:10,alignSelf:'stretch'}}>
-            //             <Text style={{
-            //                 color:'steelBlue',fontSize:16,textAlign:'center',padding:10
-            //             }}>Wanna Register as ShopMe Deliverer ? </Text>
-            //         </TouchableOpacity>
-            //     </View>
-            // </View>
-                
-            // </View>
-
-            <KeyboardAvoidingView style={styles.container} behavior='position'>
-                <View style={{alignItems:"center"}}>
-                    <Image source={require('../../Assets/logo.png')} style={{width:'70%',height:80,marginTop:10,marginRight:'5%',borderRadius:15}}/>
-                    <Text style={{fontSize:40,color:"steelblue",paddingTop:'45%',paddingBottom:'25%',fontWeight:'bold'}}>Welcome,  Ready to Ride ? </Text> 
+        <KeyboardAvoidingView style={styles.container} behavior='position' >
+                <View style={{alignItems:'flex-start'}}>
+                    <Image source={require('../../Assets/logo.png')} style={{width:'40%',height:50,marginTop:10,marginRight:'5%',borderRadius:15}}/>
+                    <Text style={{alignSelf:'center', fontSize:40,color:"steelblue",paddingTop:'5%',paddingBottom:'5%',fontWeight:'bold'}}>Registeration Form </Text>
+                    <Field name="FirstName" placeholder='First Name' component={renderField} 
+                        // validate={[required]}
+                    />
+                    <Field name="LastName" placeholder='Last Name' component={renderField} 
+                        validate={[required]}
+                    />
+                    <Field name="MobileNumber" keyboardType='numeric' placeholder='Mobile Number' component={renderField} 
+                        validate={[required]}
+                    />
                     <Field name="Email" keyboardType="email-address" placeholder='Email' component={renderField} 
                         validate={[required,isValidEmail]}
                     />
                     <Field name="Password" keyboardType='default' placeholder='Password' secureTextEntry={true} component={renderField}
-                        validate={[required]} 
+                        validate={[required,isValidPassword]} 
                     />
-                    <TouchableOpacity onPress={()=>this.handleSubmit()} style={{margin:5,alignSelf:'stretch'}}>
+                    <Field name="ConfirmPassword" keyboardType='default' placeholder='Confirm Password' secureTextEntry={true} component={renderField}
+                        validate={[required,passwordMatch]} 
+                    />
+                    <TouchableOpacity onPress={()=>handleSubmit()} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
                             <Text style={{
                                 backgroundColor:'steelblue',color:'white',fontSize:16,
                                 height:37,width:'100%',textAlign:'center',padding:10
-                            }}>Log In</Text>
+                            }}>Submit</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -113,14 +93,14 @@ class ContactForm extends Component{
 }
 const mapDispatchToProps=dispatch=>{
     return{
-        onAuth:(email,password)=>dispatch(actions.authVerify(email,password))
+       // onAuth:()=>dispatch(actions.auth())
     };
    }
-  const SignIn=reduxForm({
+  const SignUp=reduxForm({
       form:'contact',
-  })(ContactForm)
-  //export default SignIn;
-export default connect(null,mapDispatchToProps)(SignIn);
+  })(RegisterForm)
+  export default SignUp;
+//export default connect(null,mapDispatchToProps)(SignUp);
 
 const styles=StyleSheet.create({
     container: {

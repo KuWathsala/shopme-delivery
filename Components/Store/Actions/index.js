@@ -1,5 +1,6 @@
 export {
-    location
+    location,
+    isReach,
  }from './Location'
 
  export{

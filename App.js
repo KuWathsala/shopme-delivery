@@ -7,22 +7,9 @@
  */
 
 import React, {Fragment} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {StyleSheet,} from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './Components/Store/Store';
 import {Provider} from 'react-redux';
 import Router from './Components/Router';
@@ -32,7 +19,6 @@ const App = () => {
     <Provider store={Store}>
         <Router/>
     </Provider>
-  
  );
 };
 

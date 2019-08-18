@@ -2,32 +2,41 @@ import * as actionTypes from '../Actions/ActionType';
 import {updateObject} from '../utility';
 
 const initialState={
-    currentLocation:{
-        lat: 6.9271,
-        lng: 79.8612
+    sourceLocation:{
+        latitude: 6.837673280321542,
+        longitude: 79.90480335265398
     },
     shopLocation:{
-        lat:7.0271,
-        lng:80.0612
+        latitude: 6.877673280321542,
+        longitude: 79.93480335265398
     },
     customerLocation:{
-        lat:7.1271,
-        lng:80.1612
+        latitude:6.873673280321542,
+        longitude:79.92480335265398
     },
+    isReach:false,
 }
 
-const markerLocation=(state,action)=>{
+const currentLocation=(state,action)=>{
     return updateObject(state,{
-        shopLocation:{
-            lat:action.lat,
-            lng:action.lng
+        sourceLocation:{
+            latitude:action.latitude,
+            longitude:action.longitude
         }
+    })
+}
+
+const reachShop=(state,action)=>{
+    console.log("ISREACHEDDDD");
+    return updateObject(state,{
+        isReach:action.isReach
     })
 }
 
 const reducer=(state=initialState,action)=>{
     switch(action.type){
-        case actionTypes.MARKER_LOCATION:return markerLocation(state,action)
+        case actionTypes.CURRENT_LOCATION:return currentLocation(state,action);
+        case actionTypes.REACH_SHOP:return reachShop(state,action);
         default:return state;
     }
 }

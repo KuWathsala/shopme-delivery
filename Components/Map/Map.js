@@ -1,112 +1,225 @@
 import React,{Component} from "react";
-import { View, Text, Dimensions, Image, StyleSheet} from "react-native";
+import { View, Text, Image, StyleSheet,TouchableOpacity} from "react-native";
 import MapView, {PROVIDER_GOOGLE, Marker, Circle} from 'react-native-maps';
 import {connect} from 'react-redux';
+import Geolocation from '@react-native-community/geolocation';
+import MapViewDirections from 'react-native-maps-directions';
+import * as actions from '../Store/Actions/index';
+import {Actions} from 'react-native-router-flux';
+const carMarker=require("../../Assets/carMarker.png") ;
+const shopMarker=require("../../Assets/shop.png") ;
 
-class Map extends React.Component{
+class Map extends Component{
   constructor(props){
     super(props);
     this.state={
+      startLocation: {
+        latitude: 6.9271,
+        longitude: 79.8612
+      },
       source: {
         latitude: 6.9271,
         longitude: 79.8612
       },
       address: null,
       error: null,
+      sourceToShopDistance:10.0,
+      sourceToCustomer:10.0
     };
   }
   
-  // componentDidMount(){
-  //   navigator.geolocation.getCurrentPosition(
-  //     position=> {
-  //       console.log('position->',position);
-  //       this.setState({
-  //         source:{
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude,
-  //         },
-  //         error:null,
-  //       });
-  //     },
-  //     error=> {this.setState({error: error.message })},
-  //     //{ enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000 },
-  //   );
-  // }
+componentDidMount(){
+  Geolocation.getCurrentPosition(
+    position=> {
+      console.log('position->',position);
+      this.props.setLocation(position.coords.latitude,position.coords.longitude);
+      this.setState({
+        startLocation:{
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        },
+        error:null,
+      });
+    },
+    error=> {this.setState({error: error.message })},
+    { enableHighAccuracy: true},
+  );
+
+  //setInterval(() => {
+Geolocation.watchPosition(
+      position=> {
+        console.log('position==1->',position);
+        this.setState({
+          source:{
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+          error:null,
+        });
+        this.props.setLocation(this.state.source.latitude,this.state.source.longitude);
+      },
+      error=> {this.setState({error: error.message })},
+      //{ enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000 },
+      { enableHighAccuracy: true},
+    );
+  
+ // }, 1000);
+  }
+  
+  reachShop=()=>{
+    console.log("REACH THE SHOP");
+         Actions.GetOrder();
+  }
 
   render(){
-    console.log('state->',this.state);
+    let isReachedShop=false
+    if(this.state.sourceToShopDistance<0.1){
+      isReachedShop=true
+    }
+    let isFinish=false
+    if(this.state.sourceToCustomer<0.1){
+      console.log(isFinish);
+      isFinish=true
+      console.log(isFinish);
+    }
     return(
       <View style={styles.container}>
-        <MapView 
-          showsUserLocation
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          region={{
-            latitude:  this.state.source.latitude, 
-            longitude: this.state.source.longitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          }}
-        >
-
-        <Marker
-          draggable
-          coordinate={{
-            latitude:  this.state.source.latitude, 
-            longitude: this.state.source.longitude,
-          }}
-
-          onDragEnd={ 
-            (e) => this.setState({ 
-              source:{
-                latitude:  e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude,  
-              }
-            },
-            console.log(this.state))
-          }
-        />
-        <Marker
-          coordinate={{
-            latitude:7.1,
-            longitude:80.0,
-          }}
-          pinColor='green'
-        />
-
-        {/*<Circle
-          center={{
-            latitude:  this.state.latitude, 
-            longitude: this.state.longitude,
-          }}
-          radius={500}
-          strokeWidth={2}
-          strokeColor="#3399ff"
-          //fillColor="#80bfff"
-        />*/}
-
+        <View style={{flexDirection:'row',alignContent:'space-around',marginTop:5,marginBottom:5}}>
+            <TouchableOpacity onPress={()=>Actions.GetOrder()}>
+              <View style={{height:30,width:150,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,marginRight:5}}>
+                  <Text style={{fontSize:15,fontWeight:'bold',alignSelf:'center',color:'white'}}>Delivery Details</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>Actions.Profile()}>
+              <View style={{height:30,width:150,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,}}>
+                  <Text style={{fontSize:15,fontWeight:'bold',alignSelf:'center',color:'white',marginRight:5}}>Past Trips</Text>
+              </View>
+            </TouchableOpacity>
+        </View>
         
-        {/*<MapViewDirections
-          origin={this.state.source}
-          destination={this.state.destination}
-          strokeWidth={6}
-          strokeColor="blue"
-          apikey="AIzaSyAnAth7L5EhCtuNs_Znsvl-Ihhtsxb1Dlg"
-        />*/}
-        </MapView >
-      </View>
+        <View style={{flex:1}}>
+          <MapView 
+            showsUserLocation
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            region={{
+              latitude: this.props.sourceLocation.latitude, 
+              longitude: this.props.sourceLocation.longitude,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }}
+          >
+          {/*Source location*/}
+          <Marker
+            draggable
+            coordinate={{
+              latitude:  this.props.sourceLocation.latitude, 
+              longitude: this.props.sourceLocation.longitude,
+            }}
+            image={carMarker}
+
+            onDragEnd={ 
+              (e) => this.props.setLocation(e.nativeEvent.coordinate.latitude,e.nativeEvent.coordinate.longitude)
+                }
+          />
+          {/*shop location*/}
+          <Marker
+            coordinate={{
+              latitude:this.props.shopLocation.latitude,
+              longitude:this.props.shopLocation.longitude,
+            }}
+            image={shopMarker}
+          />
+          {/*customer location*/}
+          <Marker
+            coordinate={{
+              latitude:this.props.customerLocation.latitude,
+              longitude:this.props.customerLocation.longitude,
+            }}
+          />
+
+        <Marker
+            coordinate={{
+              latitude:this.state.startLocation.latitude,
+              longitude:this.state.startLocation.longitude,
+            }}
+            pinColor='#FB6910'
+          />
+          
+          <MapViewDirections
+            origin={this.props.sourceLocation}
+            destination={this.props.shopLocation}
+            apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+            strokeWidth={7}
+            strokeColor="#3399ff"
+            fillColor="#80bfff"
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+            }}
+            onReady={result => {
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} min.`)
+              this.setState({
+                sourceToShopDistance:result.distance
+              })
+            }}
+          />
+        {/*Get distance and time remain from source location to customer location */}
+        <MapViewDirections
+            origin={this.props.sourceLocation}
+            destination={this.props.customerLocation}
+            apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+            }}
+            onReady={result => {
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} min.`)
+              this.setState({
+                sourceToCustomer:result.distance
+              })
+            }}
+          />
+          {/*start location to delivrer current location path*/}
+          <MapViewDirections
+            origin={this.state.startLocation}
+            destination={this.props.sourceLocation}
+            apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+            strokeWidth={7}
+            strokeColor="#605650"
+            fillColor="#FB6910"
+          />
+        {/*shop to customer path*/}
+          {(this.props.isReached ) ?
+          <MapViewDirections
+            origin={this.props.shopLocation}
+            destination={this.props.customerLocation}
+            apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+            strokeWidth={7}
+            strokeColor="#1BB608"
+            fillColor="#FB6910"
+          />:null}
+          {isReachedShop && !this.props.isReached ? (this.reachShop()):null}
+          {isFinish ?( Actions.WrapupDeliver(),console.log('Finish journeyyyyy')):null}
+          </MapView >
+        </View>
+       </View>
     );
   }
 }
 
 const mapStateToProps=state=>{
   return{
+    shopLocation:state.location.shopLocation,
+    customerLocation:state.location.customerLocation,
+    sourceLocation:state.location.sourceLocation,
+    isReached:state.location.isReach,
   }
 }
 
 const mapDispatchToProps=dispatch=>{
   return{
-      onAuth:()=>dispatch(actions.auth())
+      setLocation:(latitude,longitude)=>dispatch(actions.location(latitude,longitude))
   };
 }
 
@@ -117,8 +230,6 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     flex:1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -129,5 +240,3 @@ const styles = StyleSheet.create({
     flexDirection:'column',
   }
 });
-
-

@@ -32,6 +32,7 @@ export const logout=()=>{
 }
 
 export const authVerify=(email,password)=>{
+    console.log(email,password)
     return dispatch=>{
         dispatch(authStart());
         const authVerifyData={
@@ -40,10 +41,10 @@ export const authVerify=(email,password)=>{
             returnSecureToken: true
         };
         
-        let url='';
-        axios.post(url,authVerifyData)
+        let url='https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=AIzaSyAH_1vanm5ZV02dvZSUnrlberVRRSBL3-k';
+        axios.get(url,authVerifyData)
         .then(response=>{
-           //console.log(response);
+           console.log(response);
             // localStorage.setItem('token',response.data.token);
             // localStorage.setItem('expirationDate',expirationDate);
             // localStorage.setItem('userId',response.data.localId);
