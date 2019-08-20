@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,Alert,Linking,KeyboardAvoidingView} from 'react-native';
 import {connect} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
-import * as actions from '../Store/Actions/index';
-import {Field,reduxForm,getFormValues,submit} from 'redux-form';
+import {Field,reduxForm,getFormValues,formValueSelector} from 'redux-form';
+import submit from './submit';
 
 const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,error,warning},input:{onChange, ...restInput}})=>{
     return(<View style={{flexDirection:'column',height:70,alignItems:'flex-start'}}>
        <View style={{flexDirection:'row',height:50,alignItems:'center'}}>
            <TextInput style={styles.Input} keyboardType={keyboardType} placeholder={placeholder} secureTextEntry={secureTextEntry} onChangeText={onChange} {...restInput}/>
        </View>
-        {touched && ((error && <Text style={{color:'red'}}>{error}</Text>) /*|| 
+        {touched && ((error && <Text style={{color:'red',fontWeight:'bold'}}>{error}</Text>) /*|| 
                     (warning && <Text style={{color:red}}>{warning}</Text>)*/) }
        </View>
     );
@@ -26,44 +25,17 @@ class RegisterForm extends Component{
         state = {
         }
       }
-    
 
-    handleSubmit=(values)=>{
-        //onAuth(this.state.email,this.state.password);
-        console.log(values);
-        //this.props.onAuth(this.state.email,this.state.password)
-       
-        
-    }
-
-
-    handleRegister=()=>{
-        Alert.alert(
-            'Register ? ',
-            'For register pls visit our site, Press OK',
-            [
-              {text: 'Ask me later', onPress: () => console.log('Ask me later Pressed'),},
-              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style:'cancel'},
-              {text: 'OK', onPress: () => { Linking.openURL('https://www.google.com')}},
-            ],
-            { cancelable: false }
-          )
-    }
-
-    render(){
-        // const submit=value=>{
-        //     console.log(value)
-        //     Alert.alert(`validation successful ${JSON.stringify(value)}`);
-        // }
-        const {submitting,handleSubmit,onSubmit}=this.props;
-        console.log(submitting);
-        return(
+render(){
+    const {submitting,handleSubmit,onSubmit}=this.props;
+    console.log(submitting);
+    return(
         <KeyboardAvoidingView style={styles.container} behavior='position' >
                 <View style={{alignItems:'flex-start'}}>
                     <Image source={require('../../Assets/logo.png')} style={{width:'40%',height:50,marginTop:10,marginRight:'5%',borderRadius:15}}/>
                     <Text style={{alignSelf:'center', fontSize:40,color:"steelblue",paddingTop:'5%',paddingBottom:'5%',fontWeight:'bold'}}>Registeration Form </Text>
                     <Field name="FirstName" placeholder='First Name' component={renderField} 
-                        // validate={[required]}
+                         validate={[required]}
                     />
                     <Field name="LastName" placeholder='Last Name' component={renderField} 
                         validate={[required]}
@@ -80,7 +52,7 @@ class RegisterForm extends Component{
                     <Field name="ConfirmPassword" keyboardType='default' placeholder='Confirm Password' secureTextEntry={true} component={renderField}
                         validate={[required,passwordMatch]} 
                     />
-                    <TouchableOpacity onPress={()=>handleSubmit()} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
+                    <TouchableOpacity onPress={handleSubmit(submit)} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
                             <Text style={{
                                 backgroundColor:'steelblue',color:'white',fontSize:16,
                                 height:37,width:'100%',textAlign:'center',padding:10
@@ -91,16 +63,17 @@ class RegisterForm extends Component{
         );
     }
 }
-const mapDispatchToProps=dispatch=>{
+
+const mapStateToProps=state=>{
     return{
-       // onAuth:()=>dispatch(actions.auth())
-    };
-   }
+     user:state.form
+    }
+  }
   const SignUp=reduxForm({
       form:'contact',
   })(RegisterForm)
-  export default SignUp;
-//export default connect(null,mapDispatchToProps)(SignUp);
+//   export default SignUp;
+export default connect(mapStateToProps,null)(SignUp);
 
 const styles=StyleSheet.create({
     container: {

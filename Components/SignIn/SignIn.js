@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 import * as actions from '../Store/Actions/index';
 import {Field,reduxForm} from 'redux-form';
+import submit from './submit';
 
 const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,error,warning},input:{onChange, ...restInput}})=>{
     return(<View style={{flexDirection:'column',height:70,alignItems:'flex-start'}}>
@@ -17,23 +18,21 @@ const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,erro
 }
 const required=value=> value ? undefined:'Required';
 const isValidEmail=value=> value && !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(value) ? 'Invalid email address':undefined;
-const isValidPassword=value=> value && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i.test(value) ? 'Password must contain UPPERCASE lowercase and numbers':undefined;
+
 
 
 class ContactForm extends Component{
     constructor(props) {
         super(props);
         state = {
-          email   : '',
-          password: '',
         }
       }
 
-    handleSubmit=()=>{
+    handleSubmiting=()=>{
         //onAuth(this.state.email,this.state.password);
         Actions.Map();
         this.props.onAuth(this.state.email,this.state.password)
-       
+        
         
     }
     handleRegister=()=>{
@@ -50,7 +49,7 @@ class ContactForm extends Component{
     }
 
     render(){
-        
+        const {submitting,handleSubmit,onSubmit}=this.props;
         return(
             
             // <View style={styles.container}>
@@ -100,7 +99,7 @@ class ContactForm extends Component{
                     <Field name="Password" keyboardType='default' placeholder='Password' secureTextEntry={true} component={renderField}
                         validate={[required]} 
                     />
-                    <TouchableOpacity onPress={()=>this.handleSubmit()} style={{margin:5,alignSelf:'stretch'}}>
+                    <TouchableOpacity onPress={handleSubmit(submit)} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
                             <Text style={{
                                 backgroundColor:'steelblue',color:'white',fontSize:16,
                                 height:37,width:'100%',textAlign:'center',padding:10
@@ -111,16 +110,11 @@ class ContactForm extends Component{
         );
     }
 }
-const mapDispatchToProps=dispatch=>{
-    return{
-        onAuth:(email,password)=>dispatch(actions.authVerify(email,password))
-    };
-   }
   const SignIn=reduxForm({
-      form:'contact',
+      form:'Signin',
   })(ContactForm)
   //export default SignIn;
-export default connect(null,mapDispatchToProps)(SignIn);
+export default SignIn;
 
 const styles=StyleSheet.create({
     container: {

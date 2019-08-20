@@ -21,12 +21,12 @@ const RouterComponent=()=>{
                     drawerWidth={250}
                     drawerPosition="left"
                 >
-                <Scene key="login" component={SignIn} /*hideNavBar={true}*/ />
+                <Scene key="login" component={SignIn} initial/*hideNavBar={true}*/ />
                 <Scene key="Map" component={Map}/>
                 <Scene key="Profile" component={Profile}/>
                 <Scene key="Status" component={Status}/>
                 <Scene key="GetOrder" component={GetOrder} />
-                <Scene key="SignUp" component={Signup} initial/>
+                <Scene key="SignUp" component={Signup} />
                 <Scene key="WrapupDeliver" component={WrapupDeliver} hideNavBar={true}/>
                 {/*
                 <Scene
