@@ -32,7 +32,7 @@ export const logout=()=>{
 }
 
 export const authVerify=(email,password)=>{
-    console.log(email,password)
+    console.log(email,password+" worked")
     return dispatch=>{
         dispatch(authStart());
         const authVerifyData={
@@ -44,6 +44,7 @@ export const authVerify=(email,password)=>{
         let url='https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=AIzaSyAH_1vanm5ZV02dvZSUnrlberVRRSBL3-k';
         axios.get(url,authVerifyData)
         .then(response=>{
+            console.log("response");
            console.log(response);
             // localStorage.setItem('token',response.data.token);
             // localStorage.setItem('expirationDate',expirationDate);
@@ -51,6 +52,7 @@ export const authVerify=(email,password)=>{
             dispatch(authSuccess(response.data.token,response.data.id));
         })
         .catch(err=>{
+            console.log("error");
             console.log(err);
             dispatch(authFail(err));
         });

@@ -91,18 +91,30 @@ class ContactForm extends Component{
 
             <KeyboardAvoidingView style={styles.container} behavior='position'>
                 <View style={{alignItems:"center"}}>
-                    <Image source={require('../../Assets/logo.png')} style={{width:'70%',height:80,marginTop:10,marginRight:'5%',borderRadius:15}}/>
-                    <Text style={{fontSize:40,color:"steelblue",paddingTop:'45%',paddingBottom:'25%',fontWeight:'bold'}}>Welcome,  Ready to Ride ? </Text> 
+                    {/*<Image source={require('../../Assets/logo.png')} style={{width:'70%',height:80,marginTop:10,marginRight:'5%',borderRadius:15}}/>*/}
+                    <Text style={{fontSize: 70,color: '#26bf63',fontWeight:'400', marginTop: '55%', fontWeight:'bold', }}>
+                        shop
+                        <Text style={{color: '#5189c9',}}>
+                            Me
+                        </Text>
+                    </Text>
+
+                    <Text style={{color: '#5d6661', fontSize: 25, fontWeight:'normal', marginTop:'-5%',fontWeight:'bold', marginLeft: '30%'}}>
+                                delivery
+                            </Text>
+                    
+                    
+                    <Text style={{fontSize:25,color:"steelblue",paddingTop:'0%',paddingBottom:'15%'}}>welcome, ready to ride? </Text> 
                     <Field name="Email" keyboardType="email-address" placeholder='Email' component={renderField} 
                         validate={[required,isValidEmail]}
                     />
                     <Field name="Password" keyboardType='default' placeholder='Password' secureTextEntry={true} component={renderField}
                         validate={[required]} 
                     />
-                    <TouchableOpacity onPress={handleSubmit(submit)} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
+                    <TouchableOpacity onPress={handleSubmit(submit)} disabled={submitting} style={{margin:5,alignSelf:'stretch', height: 55}}>
                             <Text style={{
-                                backgroundColor:'steelblue',color:'white',fontSize:16,
-                                height:37,width:'100%',textAlign:'center',padding:10
+                                backgroundColor:'steelblue',color:'white',fontSize:20,
+                                height:37,width:'100%',textAlign:'center',padding:5
                             }}>Log In</Text>
                     </TouchableOpacity>
                 </View>
@@ -131,9 +143,10 @@ const styles=StyleSheet.create({
       },
       Input:{
           backgroundColor:"white",
-          width:420,
-          height:40,
-          borderWidth:1,
+          width:'95%',
+          height:45,
+          //borderWidth:1,
+          borderBottomWidth: 1,
           borderRadius:2,
           borderColor:'steelblue',
           shadowColor:'#000',

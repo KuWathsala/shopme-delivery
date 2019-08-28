@@ -13,6 +13,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './Components/Store/Store';
 import {Provider} from 'react-redux';
 import Router from './Components/Router';
+import SingalR from './SingalR';
 
 const App = () => {
   return (
