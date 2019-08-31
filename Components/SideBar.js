@@ -37,7 +37,7 @@ export default class SideBar extends Component{
                             height:45,width:'100%',textAlign:'left',padding:10
                         }}>Current Order Details</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>Actions.Status()} style={{alignItems:'center',paddingTop:10,paddingBottom:10}}>
+                    <TouchableOpacity onPress={()=>Actions.logout()} style={{alignItems:'center',paddingTop:10,paddingBottom:10}}>
                         <Text style={{
                             backgroundColor:'white',color:'#000',fontSize:20,
                             height:45,width:'100%',textAlign:'left',padding:10

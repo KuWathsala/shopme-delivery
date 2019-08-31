@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{Component} from 'react';
+import { connect} from 'react-redux';
 import {Scene,Router,Drawer} from 'react-native-router-flux';
 import SignIn from './SignIn/SignIn';
 import Map from './Map/Map';
@@ -8,8 +9,16 @@ import GetOrder from './GetOrder';
 import WrapupDeliver from './WrapupDeliver';
 import SideBar from './SideBar';
 import Signup from './SignIn/SignUp';
+import Signout from './SignIn/Logout';
+import * as actions from './Store/Actions/index';
 
-const RouterComponent=()=>{
+class RouterComponent extends Component{
+    
+    componentDidMount(){
+        this.props.onTryAutoSignUp();
+      }
+
+    render(){
     return(
         <Router>
             <Scene key="root">
@@ -27,6 +36,7 @@ const RouterComponent=()=>{
                 <Scene key="Status" component={Status}/>
                 <Scene key="GetOrder" component={GetOrder} />
                 <Scene key="SignUp" component={Signup} />
+                <Scene key="logout" component={Signout} />
                 <Scene key="WrapupDeliver" component={WrapupDeliver} hideNavBar={true}/>
                 {/*
                 <Scene
@@ -45,5 +55,12 @@ const RouterComponent=()=>{
 
     );
 };
+};
 
-export default RouterComponent;
+const mapDispatchToProps=dispatch=>{
+    return{
+      onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
+    };
+  };
+
+export default connect(null,mapDispatchToProps)(RouterComponent);

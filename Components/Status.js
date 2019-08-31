@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
-import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity} from "react-native";
-import AnimatedLoader from 'react-native-animated-loader';
+import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity,ActivityIndicator} from "react-native";
+//import AnimatedLoader from 'react-native-animated-loader';
 
 class Status extends Component{
     constructor(props){
@@ -10,7 +10,6 @@ class Status extends Component{
             visible: false,
         }
     }
-
     switchModeHandeler=()=>{
         this.setState(prevState=>{
             return {
@@ -21,37 +20,46 @@ class Status extends Component{
     }
     render(){
         return(
-                <View style={{flex:1,backgroundColor:'#2A3A36',}}>
-                    <Text style={Styles.txtHead}>Hi, Jayashan{"\n"}You're {this.state.isOnline ? 'Online': 'offline'}{"\n"}{this.state.isOnline ? 'Wait for a Delivery..': null}</Text>
-                    <View>
+                <View style={{flex:1,}}>
+                    <Text style={{fontSize: 70,color: '#26bf63',fontWeight:'400', fontWeight:'bold', }}>
+                        shop
+                        <Text style={{color: '#5189c9',}}>Me</Text>
+                    </Text>
+                    <Text style={{color: '#5d6661', fontSize: 25, fontWeight:'normal', marginTop:'-5%',fontWeight:'bold', marginLeft: '30%'}}>
+                        delivery
+                    </Text>
+                    <View style={{flex:4}}>
+                    
+                    <Text style={{color:'#000',alignSelf:'center', fontSize:50,color:'#000',justifyContent:'center',fontWeight:'bold',paddingTop:'10%'}}>Hi, Jayashan{"\n"}You're {this.state.isOnline ? 'Online': 'offline'}{"\n"}{this.state.isOnline ? 'Wait for a Delivery..': null}</Text>
+                    
                     {/* {this.state.isOnline ? 
                         <AnimatedLoader 
                             visible={this.state.visible}
                             overlayColor="rgba(255,255,255,0.75)" 
                             animationStyle={Styles.lottie}  
                             speed={1}
-                        />: null
+                        />: null    
                     } */}
-                    </View>                 
+                    {this.state.isOnline ?  <ActivityIndicator size='large' color="green" />:null}
+                    </View>  
+                    <View style={{flex:1}}>             
                     <TouchableOpacity onPress={()=>this.switchModeHandeler()}>
-                        <View style={(this.state.isOnline ? Styles.onlineButton : Styles.offlineButton)}>
-                            <Text style={{alignSelf:'center',fontSize:30,color:'#fff',paddingTop:'20%',fontWeight:'bold'}}>GO</Text>
-                            <Text style={{alignSelf:'center',fontSize:30,color:'#fff',fontWeight:'bold'}}>{this.state.isOnline ? 'OFFLINE': 'ONLINE'}</Text>
-                        </View>
+                            <Text style={(this.state.isOnline ? 
+                                {alignSelf:'center', backgroundColor:'green',color:'white',fontSize:20,height:60,width:250,textAlign:'center',fontWeight:'bold',paddingTop:10}
+                                : 
+                                {alignSelf:'center',backgroundColor:'orange',color:'white',fontSize:20,height:60,width:250,textAlign:'center',fontWeight:'bold',paddingTop:10})}>GO {this.state.isOnline ? 'OFFLINE': 'ONLINE'}</Text>
                     </TouchableOpacity>
+                    </View>  
             </View>
         )
     };
 };
 export default Status;
-
 Styles=StyleSheet.create({
     txtHead:{
         alignSelf:'center',
         fontSize:50,
-        color:'white',
-        paddingTop:'30%', 
-        paddingBottom:'45%',
+        color:'#000',
         justifyContent:'center',
         fontWeight:'bold'
     },
@@ -66,14 +74,8 @@ Styles=StyleSheet.create({
         overflow:'hidden',
     },
     onlineButton:{
-        alignSelf:'center', 
-        height:150,
-        width:150,
-        backgroundColor:'#12DC17',
-        borderRadius:75,
-        borderWidth:5,
-        borderColor:'#94D70D',
-        overflow:'hidden',
+        backgroundColor:'green',color:'white',fontSize:20,
+        height:37,width:'100%',textAlign:'center',fontWeight:'bold'
     },
     lottie: {
         width: 200,
