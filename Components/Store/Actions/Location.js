@@ -15,3 +15,41 @@ export const isReach=(isReach)=>{
         isReach:isReach
     };
 }
+
+//////////////////////////////////////////////////////
+
+export const OrderDataRequest=()=>({
+    type: ActionTypes.ORDER_DATA_REQUEST
+});
+
+export const OrderDataSuccess=(json)=>({
+    type: ActionTypes.ORDER_DATA_SUCCESS,
+    payload: json
+}); 
+
+export const fetchOrderData=(object)=>{
+    console.log("object")
+    console.log(object)
+    let data= {
+        sourceLocation:{
+            latitude: 6.837673280321542,
+            longitude: 79.90480335265398
+        },
+        shopLocation:{
+            latitude: object.shopLocationLatitude,
+            longitude: object.shopLocationLongitude
+        },
+        customerLocation:{
+            latitude: object.customerLatitude,
+            longitude:object.customerLongitude
+        },
+        isReach:false,
+        shopName: object.shopName,
+        customerName: object.firstName+" "+object.lastName
+    }
+    console.log(data)
+    return dispatch=>{
+        dispatch(OrderDataRequest());
+        dispatch(OrderDataSuccess(data));
+    }
+}

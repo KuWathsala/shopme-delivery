@@ -15,6 +15,8 @@ const initialState={
         longitude:79.92480335265398
     },
     isReach:false,
+    shopName: '',
+    customerName: ''
 }
 
 const currentLocation=(state,action)=>{
@@ -37,6 +39,14 @@ const reducer=(state=initialState,action)=>{
     switch(action.type){
         case actionTypes.CURRENT_LOCATION:return currentLocation(state,action);
         case actionTypes.REACH_SHOP:return reachShop(state,action);
+        case actionTypes.ORDER_DATA_SUCCESS:
+            return { ...state, 
+                shopLocation: action.payload.shopLocation,
+                customerLocation: action.payload.currentLocation,
+                shopName: action.payload.shopName,
+                customer: action.payload.customerName,
+                customerLocation: action.payload.customerLocation//customer location must change
+            };  
         default:return state;
     }
 }

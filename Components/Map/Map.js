@@ -6,10 +6,7 @@ import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
 import * as actions from '../Store/Actions/index';
 import {Actions} from 'react-native-router-flux';
-import * as signalR from '@aspnet/signalr';
 import Button from "react-native-button";
-import axios from 'axios';
-
 
 const carMarker=require("../../Assets/carMarker.png") ;
 const shopMarker=require("../../Assets/shop.png") ;
@@ -30,11 +27,6 @@ class Map extends Component{
       error: null,
       sourceToShopDistance:10.0,
       sourceToCustomer:10.0,
-      connection: new signalR.HubConnectionBuilder().withUrl("http://192.168.43.15:5001/connectionHub").build(),
-      message:null,
-      accept: false,
-      delivererId: 1, //deliverer Id
-      orderDetails: null
     };
   }
 
@@ -76,70 +68,17 @@ class Map extends Component{
         );
       
     // }, 1000);
-
-    /*SingalR */
-    this.state.connection.start()
-    .then(()=> {
-        console.log("connected");
-        let delivererLocation ={
-          latitude: this.state.source.latitude, //deliverer first locaation
-          longitude: this.state.source.longitude,  //deliverer first locaation
-          delivererId: this.state.delivererId, //deliverer id 
-          connectionId: null
-        };
-        this.state.connection.invoke("GoOnline", delivererLocation);
-        //this.setState({isOnline: true, delivererStatus: 'online'})
-    })
-    .catch(error => console.log(error));
-
-    this.state.connection.invoke("SendRequest");
-    this.state.connection.on("SendRequest",(message)=>{
-        console.log(message);
-        this.setState({
-            message: message
-        })
-    })
   }
   
   reachShop=()=>{
     console.log("REACH THE SHOP");
-         Actions.GetOrder();
+    Actions.GetOrder();
   }
-
-  confirm=()=>{
-    this.setState({accept: true}),console.log(this.state.accept);
-    let orderStatus='to be delivered';
-    let delivererStatus='onroad';
-    axios.get(`http://192.168.43.15:5001/api/orders/updateOrderStatus/${this.state.message},${orderStatus}`)
-    .then(response=>{
-        console.log(response.data);
-    })
-    .catch(error=>{console.log(error)})
-    console.log(delivererStatus, orderStatus)
-    axios.get(`http://192.168.43.15:5001/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
-    .then(response=>{
-        console.log(response.data);
-    })
-    .catch(error=>{console.log(error)})
-
-    axios.get(`http://192.168.43.15:5001/api/orders/GetOrderDetailsById/${this.state.message}`)
-    .then(response=>{
-        console.log(response.data);
-        this.setState({orderDetails: response.data})
-        /*change action */
-        this.setState({message: null})
-    })
-    
-    this.state.connection.invoke("Reply",  4,"Accepted");// 4 seller id
-  }
-
-  reject=()=>{
-    this.state.connection.invoke("Reply",  4,"Reject");
-    this.setState({message: null})
-  }
+  
 
   render(){
     let isReachedShop=false
+
     if(this.state.sourceToShopDistance<0.1){
       isReachedShop=true
     }
@@ -149,14 +88,6 @@ class Map extends Component{
       isFinish=true
       console.log(isFinish);
     }
-    if(this.state.message!=null){
-      return (
-        <View>
-        <Button onPress={this.confirm}>confirm </Button>
-        <Button onPress={this.reject}>reject</Button>
-        </View>
-      );
-    } else
     return(
       <View style={styles.container}>
         <View style={{flexDirection:'row',alignContent:'space-around',marginTop:5,marginBottom:5}}>
