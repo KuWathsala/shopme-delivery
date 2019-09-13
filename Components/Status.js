@@ -15,10 +15,10 @@ class Status extends Component{
             isOnline:false,
             visible: false,
 
-            connection: new signalR.HubConnectionBuilder().withUrl("http://192.168.43.15:5001/connectionHub").build(),
+            connection: new signalR.HubConnectionBuilder().withUrl("https://backend-webapi20190825122524.azurewebsites.net/connectionHub").build(),
             message:null,
             accept: false,
-            delivererId: 1, //deliverer Id
+            delivererId: this.props.userId, //deliverer Id
             source: {
                 latitude: 6.9271,
                 longitude: 79.8612
@@ -59,14 +59,14 @@ class Status extends Component{
             })
 
             let delivererStatus='online';
-            axios.get(`http://192.168.43.15:5001/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
             .then(response=>{
                 console.log(response.data);
             })
         }
         else {
             let delivererStatus='offline';
-            axios.get(`http://192.168.43.15:5001/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
             .then(response=>{
                 console.log(response.data);
             })
@@ -77,19 +77,19 @@ class Status extends Component{
         this.setState({accept: true}),console.log(this.state.accept);
         let orderStatus='to be delivered';
         let delivererStatus='onroad';
-        axios.get(`http://192.168.43.15:5001/api/orders/updateOrderStatus/${this.state.message},${orderStatus}`)
+        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/updateOrderStatus/${this.state.message},${orderStatus}`)
         .then(response=>{
             console.log(response.data);
         })
         .catch(error=>{console.log(error)})
         console.log(delivererStatus, orderStatus)
-        axios.get(`http://192.168.43.15:5001/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
         .then(response=>{
             console.log(response.data);
         })
         .catch(error=>{console.log(error)})
     
-        axios.get(`http://192.168.43.15:5001/api/orders/GetOrderDetailsById/${this.state.message}`)
+        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.message}`)
         .then(response=>{
             console.log(response.data);
             this.props.fetchOrderData(response.data) // fetch order details
@@ -155,6 +155,7 @@ const mapStateToProps=state=>{
     console.log(state.location)
     return {
         location: state.location,
+        userId: state.auth.userId
     };
 }
   
