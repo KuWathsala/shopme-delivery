@@ -33,7 +33,7 @@ class RouterComponent extends Component{
                 <Scene key="login" component={SignIn} initial/*hideNavBar={true}*/ />
                 <Scene key="Map" component={Map}/>
                 <Scene key="Profile" component={Profile}/>
-                <Scene key="Status" component={Status}/>
+                <Scene key="Status" component={Status} />
                 <Scene key="GetOrder" component={GetOrder} />
                 <Scene key="SignUp" component={Signup} />
                 <Scene key="logout" component={Signout} />

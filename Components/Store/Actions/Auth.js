@@ -21,6 +21,7 @@ export const authSuccess=(token,userId,role)=>{
         type:ActionTypes.AUTH_SUCCESS,
         idToken:token,
         userId:userId,
+        role:role,
         
     };
 };
@@ -126,15 +127,13 @@ export const authVerify=(email,password)=>{
             if(response.data.role=='Deliverer')
                 {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role)),Actions.Status());
                     AsyncStorage.setItem("token",response.data.data.token);
+                    AsyncStorage.setItem("userId",response.data.data.id.toString());
                     AsyncStorage.setItem("expirationDate",expirationDate);
                     AsyncStorage.setItem("role",response.data.role);
-                    AsyncStorage.setItem("userId",response.data.data.id);
+                    console.log(response.data.data.id);
+                    
                 } else
                     window.alert('You are not a Deliverer person')
-             
-            // localStorage.setItem('expirationDate',expirationDate);
-            // localStorage.setItem('userId',response.data.localId);
-            // dispatch(authSuccess(response.data.token,response.data.id));
         })
         .catch(err=>{
             console.log("error");
@@ -151,6 +150,12 @@ export const authCheckState=()=>{
         AsyncStorage.getItem("token").then((value) => {
             token=value;
             console.log(token);
+            }).done();
+        
+        let userId;
+        AsyncStorage.getItem("userId").then((value) => {
+            userId=value;
+            console.log(userId);
             }).done();
         
         let role;
@@ -176,11 +181,7 @@ export const authCheckState=()=>{
     //             dispatch(logout());
     //         }
         else{
-            let userId;
-                AsyncStorage.getItem("userId").then((value) => {
-                    userId=value;
-                            //this.setState({"userId": value});
-                            }).done();
+            
                 dispatch(authSuccess(token,userId,role),Actions.Status());
                 //dispatch(checkAuthTImeout((expirationDate.getTime()-new Date().getTime())/1000));
             }
