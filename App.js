@@ -6,62 +6,84 @@
  * @flow
  */
 
-import React, {Fragment} from 'react';
-import {StyleSheet,} from 'react-native';
-
+import React, {Fragment,Component} from 'react';
+import {StyleSheet,Alert,View,Text} from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './Components/Store/Store';
 import {Provider} from 'react-redux';
 import Router from './Components/Router';
 import SingalR from './SingalR';
+import Net from './Components/Net'
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state={
+      connected:true
+    }
+};
+componentDidMount(){
+  NetInfo.isConnected.addEventListener(
+    'connectionChange',
+    this._handleConnectivityChange
 
-const App = () => {
+);
+
+  NetInfo.isConnected.fetch().done((isConnected) => {
+    if(isConnected == true)
+    {
+     this.setState({connected:true});
+    }else{
+     this.setState({connected:false});
+    }
+  });
+  }
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        this._handleConnectivityChange
+    );
+  }
+ 
+  _handleConnectivityChange = (isConnected) => {
+    if(isConnected == true)
+      {
+        this.setState({connected:true})
+      }
+      else
+      {
+        this.setState({connected:false})
+      }
+  };
+
+  render(){
   return (
     <Provider store={Store}>
-        <Router/>
-    </Provider>
+    {this.state.connected ? <Router/>: 
+    <View style={styles.offlineContainer}>
+      <Text style={styles.offlineText}>No Internet Connection</Text>
+    </View>}
+    </Provider> 
+    
  );
+}
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex:1,
-    alignContent:'center',
-    alignItems:'center',
-  },
-  engine: {
+  offlineContainer: {
+    backgroundColor: '#b52424',
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width:'100%',
     position: 'absolute',
-    right: 0,
+    top:30
+
   },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
+  offlineText: { color: '#fff' }
 });
+
 
 export default App;

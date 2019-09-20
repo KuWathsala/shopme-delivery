@@ -1,6 +1,6 @@
 import * as ActionTypes from './ActionType';
 import axios from 'axios';
-import { Actions } from 'react-native-router-flux';
+import { Actions,ActionConst } from 'react-native-router-flux';
 import {AsyncStorage} from 'react-native'
 
 export const authStart=()=>{
@@ -37,46 +37,6 @@ export const auth=(authData)=>{
     console.log(authData)
     return dispatch=>{
         dispatch(authStart());
-        // const authCust={
-        //     LoginVM:{
-        //         Email:email,
-        //         Password:password,
-        //         Role:userType
-        //     },
-        //     FirstName:firstName,
-        //     LastName:lastName,
-        //     MobileNumber:mobileno,
-        //     returnSecureToken: true
-        // };
-
-        // const authSeller={
-        //     LoginVM:{
-        //         Email:email,
-        //         Password:password,
-        //         Role:userType
-        //     },
-        //     FirstName:firstName,
-        //     LastName:lastName,
-        //     MobileNumber:mobileno,
-        //     ShopName:shopname,
-        //     AccountNo:accno,
-        //     ShopLocationLatitude:lat,
-        //     ShopLocationLongitude:lng,
-        //     returnSecureToken: true
-        // }
-
-        // const authDeliver={
-        //     LoginVM:{
-        //         Email:email,
-        //         Password:password,
-        //         Role:userType
-        //     },
-        //     FirstName:firstName,
-        //     LastName:lastName,
-        //     MobileNumber:mobileno,
-        //     VehicleNo:vhno,
-        //     VehicleType:vehicle,
-        // }
         console.log("auth : ",authData);
         let url='';
             console.log(authData.role);
@@ -105,6 +65,7 @@ export const logout=()=>{
     // localStorage.removeItem('userId');
     return {
         type:ActionTypes.AUTH_LOGOUT
+        
     }
 }
 
@@ -168,7 +129,7 @@ export const authCheckState=()=>{
         sleep(1000).then(() => {
         if(!token){
             console.log("error dispatching");
-            dispatch(logout());
+            dispatch(logout(),Actions.signIn());
         }
     //     }else{
         

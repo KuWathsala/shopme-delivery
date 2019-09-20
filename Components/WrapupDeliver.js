@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity} from "react-native";
+import {wrapupdelivery} from './Store/Actions/Location';
 import AnimatedLoader from 'react-native-animated-loader';
 import MapViewDirections from 'react-native-maps-directions';
 import {connect} from 'react-redux';
@@ -14,6 +15,10 @@ class WrapupDeliver extends Component{
             fare:null
         }
     }
+handleFinish=()=>{
+    Actions.Status();
+    this.props.wrapupdelivery();
+}
     render(){
         return(
                 <View style={{flex:1,backgroundColor:'#2A3A36',}}>
@@ -24,7 +29,7 @@ class WrapupDeliver extends Component{
                             <Text style={{alignSelf:'center',fontSize:30,color:'#fff',fontWeight:'bold'}}>OK</Text>
                         </View>
                     </TouchableOpacity> */}
-                    <TouchableOpacity onPress={()=>Actions.Status()} style={{margin:10,alignSelf:'stretch'}}>
+                    <TouchableOpacity onPress={()=>this.handleFinish} style={{margin:10,alignSelf:'stretch'}}>
                         <Text style={{
                             backgroundColor:'steelblue',color:'white',fontSize:16,
                             height:37,width:'100%',textAlign:'center',padding:10
@@ -56,7 +61,9 @@ const mapStateToProps=state=>{
         customerLocation:state.location.customerLocation,
     }
   }
-export default connect(mapStateToProps,null)(WrapupDeliver);
+export default connect(mapStateToProps,{
+    wrapupdelivery,
+})(WrapupDeliver);
 
 Styles=StyleSheet.create({
     txtHead:{

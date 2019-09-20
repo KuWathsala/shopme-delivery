@@ -1,14 +1,13 @@
 import React,{Component} from 'react';
 import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity,ActivityIndicator,Modal} from "react-native";
-//import AnimatedLoader from 'react-native-animated-loader';
 import Button from 'react-native-button';
 import * as signalR from '@aspnet/signalr';
 import Map from './Map/Map';
 import axios from 'axios';
 import {fetchOrderData} from './Store/Actions/Location';
 import {connect} from 'react-redux'
-import { Actions } from 'react-native-router-flux';
-//import Modal from 'react-native-modal';
+import { Actions,ActionConst } from 'react-native-router-flux';
+import {AsyncStorage} from 'react-native'
 
 class Status extends Component{
     constructor(props){
@@ -26,31 +25,48 @@ class Status extends Component{
                 latitude: 6.9271,
                 longitude: 79.8612
             },
+            OrderData:[],
         }
     }
 
     componentDidMount(){
         /*SingalR */
-        this.state.connection.start()
-        .then(()=> {
-            console.log("connected");
-            console.log(parseInt(this.props.userId));
-            let delivererLocation ={
-            latitude: this.state.source.latitude, //deliverer first locaation
-            longitude: this.state.source.longitude,  //deliverer first locaation
-            delivererId: this.state.delivererId, //deliverer id 
-            connectionId: null
-            };
-            this.state.connection.invoke("GoOnline", delivererLocation);
-            //this.setState({isOnline: true, delivererStatus: 'online'})
-    })
-    .catch(error => console.log(error));
+        let deliverId
+        AsyncStorage.getItem("DeliverId").then((value) => {
+            deliverId=value;
+            console.log(deliverId)
+            }).done();
+        if(!deliverId){
+            this.state.connection.start()
+            .then(()=> {
+                console.log("connected");
+                console.log(parseInt(this.props.userId));
+                let delivererLocation ={
+                latitude: this.state.source.latitude, //deliverer first locaation
+                longitude: this.state.source.longitude,  //deliverer first locaation
+                delivererId: this.state.delivererId, //deliverer id 
+                connectionId: null
+                };
+                this.state.connection.invoke("GoOnline", delivererLocation);
+                //this.setState({isOnline: true, delivererStatus: 'online'})
+        })
+        .catch(error => console.log(error));
+        }else{
+            console.log("noooooooooooooooooooooooooooooooo")
+            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${deliverId}`)
+                    .then(response=>{
+                        console.log(response.data);
+                        this.setState({OrderData:response.data});
+                        console.log(this.state.OrderData);
+                       // this.props.fetchOrderData(response.data) // fetch order details
+                    }), this.props.fetchOrderData(this.state.OrderData,deliverId)
+        } 
     }
 
     switchModeHandeler=()=>{
         this.setState(prevState=>{
             return {
-                isOnline:!prevState.isOnline,visible:true
+                isOnline:!prevState.isOnline,
             };
             
         })
@@ -59,7 +75,14 @@ class Status extends Component{
             this.state.connection.invoke("SendRequest");
             this.state.connection.on("SendRequest",(message)=>{
                 console.log(message);
-                this.setState({message: message})
+                axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${message}`)
+                    .then(response=>{
+                        console.log(response.data);
+                        this.setState({OrderData:response.data});
+                        console.log(this.state.OrderData);
+                       // this.props.fetchOrderData(response.data) // fetch order details
+                    })
+                this.setState({message: message,ismodalvisible:true})
             })
 
             let delivererStatus='online';
@@ -93,12 +116,12 @@ class Status extends Component{
         })
         .catch(error=>{console.log(error)})
     
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.message}`)
-        .then(response=>{
-            console.log(response.data);
-            this.props.fetchOrderData(response.data) // fetch order details
+        //axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.message}`)
+        //.then(response=>{
+            //console.log(response.data);
+            this.props.fetchOrderData(this.state.OrderData,this.state.message) // fetch order details
             this.setState({message: null})
-        })
+       // })
         this.setState({ismodalvisible:false});
         this.state.connection.invoke("Reply", parseInt(this.props.userId),"Accepted");// 4 seller id
         Actions.Map();
@@ -111,73 +134,48 @@ class Status extends Component{
         Actions.Status();
       }
 
-    render(){
-        if(this.state.message!=null){
-            return (
+render(){
+    if(this.state.message!=null){
+        return (
             <View style={{flex:1,backgroundColor:'black',opacity:0.6,transparent:true}}>
-                {/* <Modal 
-                animationType="slide"
-                transparent={true}
-                visible={this.state.ismodalvisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                }}>
-                {/* <View style={{flexDirection:'row', alignContent:'center',justifyContent:'center',alignSelf:'center',marginTop:'50%'}}>
-                <TouchableOpacity onPress={this.confirm} style={{justifyContent:'center',alignItems:'center', alignSelf:'center'}}>
-                    <Text style={{color:'white',margin:5,backgroundColor:'green',color:'white',fontSize:20,padding:5}}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this.reject} style={{justifyContent:'center',alignItems:'center',alignSelf:'center'}}>
-                    <Text style={{color:'white',margin:5,backgroundColor:'red',color:'white',fontSize:20,padding:5}}>Reject</Text>
-                </TouchableOpacity>
-                 {/* <Button onPress={this.confirm}>confirm </Button>
-                 <Button onPress={this.reject}>reject</Button> 
-                </View> *
-                <View style={{marginTop: 22}}>
-            <View>
-              <Text>Hello World!</Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}>
-                <Text>Hide Modal</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-              </Modal> */}
-     <Modal
-          transparent={true}
-          animationType={"slide"}
-          visible={this.state.ismodalvisible}
-         // onRequestClose={ () => { this.setState(!this.state.ismodalvisible)} } 
-         >
- 
- 
-            <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.ModalInsideView}>
-                    <Text style={styles.TextStyle}>New Order is Waiting.... </Text>
-                    <View style={{flexDirection:'row', alignContent:'center',justifyContent:'center',alignSelf:'center'}}>
-                    <TouchableOpacity onPress={this.confirm} style={{justifyContent:'center',alignItems:'center', alignSelf:'center'}}>
-                    <Text style={{color:'white',margin:5,backgroundColor:'green',color:'white',fontSize:20,padding:5}}>Accept</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={this.reject} style={{justifyContent:'center',alignItems:'center',alignSelf:'center'}}>
-                    <Text style={{color:'white',margin:5,backgroundColor:'red',color:'white',fontSize:20,padding:5}}>Reject</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
- 
-            </View>
-    </Modal>
-            </View>
+                <Modal
+                    transparent={true}
+                    animationType={"slide"}
+                    visible={this.state.ismodalvisible}
+                    onRequestClose={ () => { this.setState(!this.state.ismodalvisible)} }
+                    >
+                        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={styles.ModalInsideView}>
+                                <Text style={styles.TextStyle}>New Order from Shop {this.state.OrderData.shopName} </Text>
+                                <Text style={styles.TextStyle}>Customer Name {this.state.OrderData.firstName} {this.state.OrderData.lastName} </Text>
+                                <View style={{flexDirection:'row', alignContent:'center',justifyContent:'center',alignSelf:'center'}}>
+                                <TouchableOpacity onPress={this.confirm} style={{justifyContent:'center',alignItems:'center', alignSelf:'center'}}>
+                                <Text style={{color:'white',margin:5,backgroundColor:'green',color:'white',fontSize:20,padding:5}}>Accept</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={this.reject} style={{justifyContent:'center',alignItems:'center',alignSelf:'center'}}>
+                                <Text style={{color:'white',margin:5,backgroundColor:'red',color:'white',fontSize:20,padding:5}}>Reject</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
             
-            //   <View>
-            //   <Button onPress={this.confirm}>confirm </Button>
-            //   <Button onPress={this.reject}>reject</Button>
-            //   </View>
+                        </View>
+                </Modal>
+            </View>
             );
         } else
         return(
-                <View style={{flex:1,}}>
+                <View style={{flex:1}}>
+                    <View style={{justifyContent: 'flex-start', alignItems: 'center', alignSelf:'center',position: 'absolute', top: 5}}>
+                        <Text style={{fontSize: 70,color: '#26bf63',fontWeight:'400', marginTop: '55%', fontWeight:'bold', }}>
+                            shop
+                            <Text style={{color: '#5189c9',}}>
+                                Me
+                            </Text>
+                        </Text>
+                        <Text style={{color: '#5d6661', fontSize: 25, fontWeight:'normal', marginTop:'-5%',fontWeight:'bold', marginLeft: '30%'}}>
+                                    delivery
+                        </Text>
+                    </View>
                     <View style={{flex:1,justifyContent: 'center', alignItems: 'center', alignSelf:'center'}}>
                         {this.state.isOnline ?  <ActivityIndicator  size='large' color="green" />:null}
                     </View>
@@ -208,32 +206,6 @@ export default connect(mapStateToProps,{
 
 
 styles=StyleSheet.create({
-    txtHead:{
-        alignSelf:'center',
-        fontSize:50,
-        color:'#000',
-        justifyContent:'center',
-        fontWeight:'bold'
-    },
-    offlineButton:{
-        alignSelf:'center', 
-        height:150,
-        width:150,
-        backgroundColor:'#FA6318',
-        borderRadius:75,
-        borderWidth:5,
-        borderColor:'#FBCC10',
-        overflow:'hidden',
-    },
-    onlineButton:{
-        backgroundColor:'green',color:'white',fontSize:20,
-        height:37,width:'100%',textAlign:'center',fontWeight:'bold'
-    },
-    lottie: {
-        width: 200,
-        height: 200
-      },
-
       MainContainer :{
         
         flex:1,
@@ -259,7 +231,7 @@ styles=StyleSheet.create({
         TextStyle:{
          
           fontSize: 20, 
-          marginBottom: 20, 
+          marginBottom: 5, 
           color: "#fff",
           padding: 20,
           textAlign: 'center'

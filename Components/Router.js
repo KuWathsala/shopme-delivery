@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { connect} from 'react-redux';
-import {Scene,Router,Drawer} from 'react-native-router-flux';
+import {Scene,Router,Drawer,ActionConst} from 'react-native-router-flux';
 import SignIn from './SignIn/SignIn';
 import Map from './Map/Map';
 import Profile from './Profile/Profile';
@@ -10,12 +10,13 @@ import WrapupDeliver from './WrapupDeliver';
 import SideBar from './SideBar';
 import Signup from './SignIn/SignUp';
 import Signout from './SignIn/Logout';
+import Start from './Start';
 import * as actions from './Store/Actions/index';
 
 class RouterComponent extends Component{
     
     componentDidMount(){
-        this.props.onTryAutoSignUp();
+        //this.props.onTryAutoSignUp();
       }
 
     render(){
@@ -30,10 +31,12 @@ class RouterComponent extends Component{
                     drawerWidth={250}
                     drawerPosition="left"
                 >
-                <Scene key="login" component={SignIn} initial/*hideNavBar={true}*/ />
+                <Scene key="Start" component={Start} hideNavBar={true}/>
+                <Scene key="login" component={SignIn} /*hideNavBar={true}*/ />
+                {}
                 <Scene key="Map" component={Map}/>
                 <Scene key="Profile" component={Profile}/>
-                <Scene key="Status" component={Status} />
+                <Scene key="Status" component={Status}/>
                 <Scene key="GetOrder" component={GetOrder} />
                 <Scene key="SignUp" component={Signup} />
                 <Scene key="logout" component={Signout} />
@@ -57,10 +60,17 @@ class RouterComponent extends Component{
 };
 };
 
-const mapDispatchToProps=dispatch=>{
-    return{
-      onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
-    };
-  };
+// const mapDispatchToProps=dispatch=>{
+//     return{
+//       onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
+//     };
+//   };
 
-export default connect(null,mapDispatchToProps)(RouterComponent);
+//export default connect(null,mapDispatchToProps)(RouterComponent);
+
+const mapStateToProps = (state) => {
+    return {
+        isAuth:state.auth.token!==null
+    }
+}
+export default connect(mapStateToProps,null)(RouterComponent);

@@ -46,7 +46,15 @@ const reducer=(state=initialState,action)=>{
                 shopName: action.payload.shopName,
                 customer: action.payload.customerName,
                 customerLocation: action.payload.customerLocation//customer location must change
-            };  
+            };
+            // case actionTypes.FINISH_ORDER:
+            //     return { ...state, 
+            //         shopLocation: null,
+            //         customerLocation: null,
+            //         shopName: null,
+            //         customer: null,
+            //         customerLocation: null//customer location must change
+            //     };  
         default:return state;
     }
 }
