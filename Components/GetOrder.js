@@ -8,35 +8,26 @@ class GetOrder extends Component{
     constructor(props){
         super(props);
         this.state={
-            Order:[
-                {name:'Milk',quantity:'2'},
-                {name:'jhssjs',quantity:'3'},
-                {name:'Milk',quantity:'2'},
-                {name:'jhssjs',quantity:'3'},
-                {name:'Milk',quantity:'2'},
-                {name:'jhssjs',quantity:'3'},
-                {name:'Milk',quantity:'2'},
-                {name:'jhssjs',quantity:'3'},
-                {name:'powder',quantity:'4'}
-            ]
+            Order:this.props.products
             }
         };
 
-        orderConfirmHandeler=()=>{
+orderConfirmHandeler=()=>{
             this.props.setReach(true)
             Actions.Map();
         }
-    orders=()=>{
-        return this.state.Order.map((data=>{
-            return (
-                <View style={{flex: 1, alignSelf: 'stretch', flexDirection: 'row'}}>
-                    <Text style={{flex: 1, alignSelf: 'stretch',paddingLeft:'20%',color:'white',fontSize:20,fontWeight:'bold',paddingBottom:15}}>{data.name}</Text>
-                    <Text style={{flex: 1, alignSelf: 'stretch',color:'white',fontSize:20,fontWeight:'bold'}}>{data.quantity}</Text>
-                </View>
-            )
-        }))
+orders=()=>{
+    return this.state.Order.map((data,i)=>{
+        return (
+            <View key={i} style={{flex: 1, alignSelf: 'stretch', flexDirection: 'row'}}>
+                <Text style={{flex: 1, alignSelf: 'stretch',paddingLeft:'20%',color:'white',fontSize:20,fontWeight:'bold',paddingBottom:15}}>{data.name}</Text>
+                <Text style={{flex: 1, alignSelf: 'stretch',color:'white',fontSize:20,fontWeight:'bold'}}>{data.quantity}</Text>
+            </View>
+        )
+    })
     }
     render(){
+        console.log(this.state.Order)
         return(
             <ScrollView>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' ,backgroundColor:'#2A3A36'}}>
@@ -78,6 +69,7 @@ class GetOrder extends Component{
 const mapStateToProps=state=>{
     return{
       isReached:state.location.isReach,
+      products:state.location.products
     }
   }
   const mapDispatchToProps=dispatch=>{

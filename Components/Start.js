@@ -3,6 +3,7 @@ import {Text,View,StyleSheet,Alert,ActivityIndicator} from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 import { connect} from 'react-redux';
 import * as actions from './Store/Actions/index';
+import { Actions } from 'react-native-router-flux';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -13,43 +14,12 @@ class Start extends Component{
       connected:null
     }
 };
+componentDidMount(){
+  if(this.props.isAuth){
+    Actions.Status();
+  }
+}
 
-
-
-// componentDidMount(){
-//   NetInfo.isConnected.addEventListener(
-//     'connectionChange',
-//     this._handleConnectivityChange
-
-// );
-
-//   NetInfo.isConnected.fetch().done((isConnected) => {
-//     if(isConnected == true)
-//     {
-//      this.setState({connected:true});
-//     }else{
-//      this.setState({connected:false});
-//     }
-//   });
-//   }
-
-//   componentWillUnmount() {
-//     NetInfo.isConnected.removeEventListener(
-//         'connectionChange',
-//         this._handleConnectivityChange
-//     );
-//   }
- 
-//   _handleConnectivityChange = (isConnected) => {
-//     if(isConnected == true)
-//       {
-//         this.setState({connected:true})
-//       }
-//       else
-//       {
-//         this.setState({connected:false})
-//       }
-//   };
 
      render(){
         return(
@@ -59,7 +29,7 @@ class Start extends Component{
           <Text style={styles.offlineText}>No Internet Connection</Text>
           </View>}
           {this.state.connected ? this.props.onTryAutoSignUp():null} */}
-          {this.props.onTryAutoSignUp()}
+          {/* {this.props.onTryAutoSignUp()} */}
           <View style={{flex:1,justifyContent: 'center', alignItems: 'center', alignSelf:'center',position: 'absolute', top: 5}}>
           <Text style={{fontSize: 80,color: '#26bf63',fontWeight:'400', marginTop: '55%', fontWeight:'bold', }}>
               Shop
@@ -78,14 +48,20 @@ class Start extends Component{
         );
     }
 }
+const mapStateToProps = (state) => {
+  return {
+      isAuth:state.auth.token!==null
+  }
+}
 
-const mapDispatchToProps=dispatch=>{
-  return{
-    onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
-  };
-};
+// const mapDispatchToProps=dispatch=>{
+//   return{
+//     onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
+//   };
+// };
 
-export default connect(null,mapDispatchToProps)(Start);
+ export default connect(mapStateToProps,null)(Start);
+//export default Start;
 
 const styles = StyleSheet.create({
   offlineContainer: {

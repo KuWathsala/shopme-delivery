@@ -2,6 +2,7 @@ import * as actionTypes from '../Actions/ActionType';
 import {updateObject} from '../utility';
 
 const initialState={
+    products:[],
     sourceLocation:{
         latitude: 6.837673280321542,
         longitude: 79.90480335265398
@@ -41,6 +42,7 @@ const reducer=(state=initialState,action)=>{
         case actionTypes.REACH_SHOP:return reachShop(state,action);
         case actionTypes.ORDER_DATA_SUCCESS:
             return { ...state, 
+                products:action.payload.products,
                 shopLocation: action.payload.shopLocation,
                 customerLocation: action.payload.currentLocation,
                 shopName: action.payload.shopName,

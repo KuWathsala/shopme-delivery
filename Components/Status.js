@@ -26,6 +26,7 @@ class Status extends Component{
                 longitude: 79.8612
             },
             OrderData:[],
+            deliveryId:0,
         }
     }
 
@@ -33,10 +34,11 @@ class Status extends Component{
         /*SingalR */
         let deliverId
         AsyncStorage.getItem("DeliverId").then((value) => {
-            deliverId=value;
+            deliverId=parseInt(value);
+            
             console.log(deliverId)
-            }).done();
-        if(!deliverId){
+            }).done(),this.setState({deliveryId: this.deliverId});
+            
             this.state.connection.start()
             .then(()=> {
                 console.log("connected");
@@ -51,16 +53,17 @@ class Status extends Component{
                 //this.setState({isOnline: true, delivererStatus: 'online'})
         })
         .catch(error => console.log(error));
-        }else{
-            console.log("noooooooooooooooooooooooooooooooo")
-            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${deliverId}`)
+    }
+
+    handleDelivery=()=>{
+        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliveryId}`)
                     .then(response=>{
                         console.log(response.data);
                         this.setState({OrderData:response.data});
                         console.log(this.state.OrderData);
                        // this.props.fetchOrderData(response.data) // fetch order details
-                    }), this.props.fetchOrderData(this.state.OrderData,deliverId)
-        } 
+                    }), this.props.fetchOrderData(this.state.OrderData,this.state.deliveryId)
+                    Actions.Map();
     }
 
     switchModeHandeler=()=>{
@@ -135,6 +138,8 @@ class Status extends Component{
       }
 
 render(){
+    console.log(this.state.deliveryId)
+   
     if(this.state.message!=null){
         return (
             <View style={{flex:1,backgroundColor:'black',opacity:0.6,transparent:true}}>

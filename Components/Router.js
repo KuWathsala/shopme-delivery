@@ -11,12 +11,13 @@ import SideBar from './SideBar';
 import Signup from './SignIn/SignUp';
 import Signout from './SignIn/Logout';
 import Start from './Start';
+import UnfinishDelivery from './UnfinishedDelivey';
 import * as actions from './Store/Actions/index';
 
 class RouterComponent extends Component{
     
     componentDidMount(){
-        //this.props.onTryAutoSignUp();
+        this.props.onTryAutoSignUp();
       }
 
     render(){
@@ -33,8 +34,8 @@ class RouterComponent extends Component{
                 >
                 <Scene key="Start" component={Start} hideNavBar={true}/>
                 <Scene key="login" component={SignIn} /*hideNavBar={true}*/ />
-                {}
                 <Scene key="Map" component={Map}/>
+                <Scene key="UnfinishDelivery" component={UnfinishDelivery}/>
                 <Scene key="Profile" component={Profile}/>
                 <Scene key="Status" component={Status}/>
                 <Scene key="GetOrder" component={GetOrder} />
@@ -60,17 +61,17 @@ class RouterComponent extends Component{
 };
 };
 
-// const mapDispatchToProps=dispatch=>{
-//     return{
-//       onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
-//     };
-//   };
+const mapDispatchToProps=dispatch=>{
+    return{
+      onTryAutoSignUp: ()=>dispatch(actions.authCheckState())
+    };
+  };
 
 //export default connect(null,mapDispatchToProps)(RouterComponent);
 
-const mapStateToProps = (state) => {
-    return {
-        isAuth:state.auth.token!==null
-    }
-}
-export default connect(mapStateToProps,null)(RouterComponent);
+// const mapStateToProps = (state) => {
+//     return {
+//         isAuth:state.auth.token!==null
+//     }
+// }
+export default connect(null,mapDispatchToProps)(RouterComponent);

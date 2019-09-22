@@ -1,7 +1,10 @@
 import * as ActionTypes from './ActionType';
 import axios from 'axios';
 import { Actions,ActionConst } from 'react-native-router-flux';
-import {AsyncStorage} from 'react-native'
+import {AsyncStorage} from 'react-native';
+import store from '../Store';
+import {connect} from 'react-redux';
+//import {fetchOrderData} from './Location';
 
 export const authStart=()=>{
     return{
@@ -23,7 +26,9 @@ export const authSuccess=(token,userId,role)=>{
         userId:userId,
         role:role,
         
+        
     };
+
 };
 
 export const authFail=(error)=>{
@@ -86,13 +91,13 @@ export const authVerify=(email,password)=>{
            console.log(response);
            const expirationDate=new Date(new Date().getTime()+/*response.data.expiresIn*/3600*10000);
             if(response.data.role=='Deliverer')
-                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role)),Actions.Status());
+                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role)));
                     AsyncStorage.setItem("token",response.data.data.token);
                     AsyncStorage.setItem("userId",response.data.data.id.toString());
                     AsyncStorage.setItem("expirationDate",expirationDate);
                     AsyncStorage.setItem("role",response.data.role);
                     console.log(response.data.data.id);
-                    
+                    Actions.Status()
                 } else
                     window.alert('You are not a Deliverer person')
         })
@@ -112,6 +117,12 @@ export const authCheckState=()=>{
             token=value;
             console.log(token);
             }).done();
+            
+            let deliverId;
+            AsyncStorage.getItem("DeliverId").then((value) => {
+                deliverId=value;
+                console.log(deliverId);
+                }).done();
         
         let userId;
         AsyncStorage.getItem("userId").then((value) => {
@@ -125,11 +136,14 @@ export const authCheckState=()=>{
                    role=value;
                 //this.setState({"role": value});
                 }).done();
+        
+                
+
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
         sleep(1000).then(() => {
         if(!token){
             console.log("error dispatching");
-            dispatch(logout(),Actions.signIn());
+            dispatch(logout(),Actions.login());
         }
     //     }else{
         
@@ -142,9 +156,12 @@ export const authCheckState=()=>{
     //             dispatch(logout());
     //         }
         else{
-            
+            if(!deliverId){
                 dispatch(authSuccess(token,userId,role),Actions.Status());
-                //dispatch(checkAuthTImeout((expirationDate.getTime()-new Date().getTime())/1000));
+            }else{
+                   dispatch(authSuccess(token,userId,role),Actions.UnfinishDelivery());
+                
+            }                //dispatch(checkAuthTImeout((expirationDate.getTime()-new Date().getTime())/1000));
             }
             })
         }

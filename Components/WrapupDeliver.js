@@ -16,8 +16,9 @@ class WrapupDeliver extends Component{
         }
     }
 handleFinish=()=>{
-    Actions.Status();
+    console.log("Finish Work");
     this.props.wrapupdelivery();
+    Actions.Status();
 }
     render(){
         return(
@@ -29,7 +30,7 @@ handleFinish=()=>{
                             <Text style={{alignSelf:'center',fontSize:30,color:'#fff',fontWeight:'bold'}}>OK</Text>
                         </View>
                     </TouchableOpacity> */}
-                    <TouchableOpacity onPress={()=>this.handleFinish} style={{margin:10,alignSelf:'stretch'}}>
+                    <TouchableOpacity onPress={()=>this.handleFinish()} style={{margin:10,alignSelf:'stretch'}}>
                         <Text style={{
                             backgroundColor:'steelblue',color:'white',fontSize:16,
                             height:37,width:'100%',textAlign:'center',padding:10

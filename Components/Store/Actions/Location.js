@@ -32,6 +32,7 @@ export const fetchOrderData=(object,id)=>{
     console.log("object")
     console.log(object)
     let data= {
+        products:{...object.products},
         sourceLocation:{
             latitude: 6.837673280321542,
             longitude: 79.90480335265398
@@ -46,18 +47,21 @@ export const fetchOrderData=(object,id)=>{
         },
         isReach:false,
         shopName: object.shopName,
-        customerName: object.firstName+" "+object.lastName
+        customerName: object.firstName+" "+object.lastName,
     }
     console.log(data)
+    console.log(data.products)
     return dispatch=>{
         dispatch(OrderDataRequest());
         dispatch(OrderDataSuccess(data));
-        AsyncStorage.setItem("DeliverId",id);
+        console.log("at location action"+id)
+        AsyncStorage.setItem("DeliverId",id.toString());
     }
 }
 
 export const wrapupdelivery=()=>{
     return dispatch=>{
+        console.log('deliverywrapup')
         dispatch(FinishOrder());
         AsyncStorage.removeItem("DeliverId");
     }
