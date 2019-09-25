@@ -6,7 +6,9 @@ const initialState={
     userId:null,
     error:null,
     loading:false,
-    userType:null
+    userType:null,
+    profImage:null,
+    name:null
 }
 const authstart =(state,action)=>{
     return updateObject(state,{error:null,loading:true})
@@ -17,7 +19,9 @@ const authSuccess=(state,action)=>{
         token:action.idToken,
         userId:action.userId,
         error:null,
-        loading:false
+        loading:false,
+        profImage:action.profImage,
+        name:action.name
     })
 }
 
@@ -26,7 +30,7 @@ const authfail=(state,action)=>{
 }
 
 const authLogout=(state,action)=>{
-    return updateObject(state,{token:null,userId:null});
+    return updateObject(state,{token:null,userId:null,profImage:null});
 }
 
 const reducer =( state=initialState,action)=>{

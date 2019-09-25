@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,KeyboardAvoidingView,ScrollView} from 'react-native';
+import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,KeyboardAvoidingView,ScrollView,Button} from 'react-native';
 import {connect} from 'react-redux';
 import {Field,reduxForm,getFormValues,formValueSelector} from 'redux-form';
 import {auth} from '../Store/Actions/Auth';
+import ImagePicker from 'react-native-image-picker';
+import axios from 'axios';
 
 const renderField=({keyboardType,placeholder,secureTextEntry, meta:{touched,error,warning},input:{onChange, ...restInput}})=>{
     return(<View style={{flexDirection:'column',height:70,alignItems:'flex-start'}}>
@@ -19,13 +21,65 @@ const isValidEmail=value=> value && !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,
 const isValidPassword=value=> value && !/^(?=.{10,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/i.test(value) ? 'Required UPPERCASE, lowercase, digit, symbol and minimum 10 characters ':undefined;
 const passwordMatch=(value,allValues)=> value!==allValues.Password ? 'Passwords do not Match':undefined;
 
-
 class RegisterForm extends Component{
     constructor(props) {
         super(props);
         state = {
+            imgurl:null,
         }
       }
+
+chooseFile = () => {
+        let options = {
+          title: 'Select Image',
+        //   customButtons: [
+        //     { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
+        //   ],
+          storageOptions: {
+            skipBackup: true,
+            path: 'images',
+          },
+        };
+
+        ImagePicker.showImagePicker(options, response => {
+          console.log('Response = ', response);
+     
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else if (response.customButton) {
+            console.log('User tapped custom button: ', response.customButton);
+            alert(response.customButton);
+          } else {
+            let source = response;
+            // You can also display the image using data:
+            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+            
+            this.setState({
+              filePath: source,
+            });
+            const formData = new FormData();
+            formData.append("file", response);
+            formData.append('api_key', 'N0iPhJFusPjArpBfPbui9j8MkEs');
+            formData.append("upload_preset", 'm0uhbhzz');
+            axios.post('https://api.cloudinary.com/v1_1/dubnsitvx/image/upload',formData,{
+            onUploadProgress: ProgressEvent=>{
+            console.log('Upload Progress:'+Math.round(ProgressEvent.loaded / ProgressEvent.total*100 )+'%')
+        }
+    })
+    .then(res=>{
+        console.log(res)
+        console.log(res.data.url);
+        Imgurl=res.data.url;
+    })
+    .catch(err=>{
+        console.log(err)
+    });
+          }
+        })
+        
+      };
 
 submit=(values)=> {
     let authData
@@ -47,6 +101,7 @@ submit=(values)=> {
         console.log(values);
     }
 
+    
 
 render(){
     const {submitting,handleSubmit,onSubmit}=this.props;
@@ -54,8 +109,28 @@ render(){
     console.log(submitting);
     return(
             <ScrollView>
+                
+                {this.props.isloading ?  
+                    <Modal
+                    transparent={true}
+                    animationType={"slide"}
+                    visible={this.props.isloading}
+                    onRequestClose={ () => { this.setState(!this.state.ismodalvisible)} }
+                    >
+                        <View style={{ flex:1, justifyContent: 'center', alignItems: 'center',backgroundColor:'black',opacity:0.6 }}>
+                            <ActivityIndicator size='large' color="white"/>
+                        </View>
+                </Modal>:null}
                 <KeyboardAvoidingView style={styles.container} behavior='position' >
-                    <Image source={require('../../Assets/logo.png')} style={{width:'40%',height:50,marginTop:10,marginRight:'5%',borderRadius:15}}/>
+                    {/* <Image source={require('../../Assets/logo.png')} style={{width:'40%',height:50,marginTop:10,marginRight:'5%',borderRadius:15}}/> */}
+                    <Text style={{fontSize: 50,color: '#26bf63',fontWeight:'400', fontWeight:'bold',marginTop:15,alignSelf:'center'}}>
+                    shop
+                <Text style={{color: '#5189c9',}}>Me</Text>
+                </Text>
+                    <Text style={{color: '#5d6661', fontSize: 15, fontWeight:'normal', marginTop:'-2%',fontWeight:'bold', marginLeft: '30%',alignSelf:'center'}}>
+                        delivery
+                    </Text>
+                    
                     <Text style={{alignSelf:'center', fontSize:40,color:"steelblue",paddingTop:'5%',paddingBottom:'5%',fontWeight:'bold'}}>Registeration Form </Text>
                     <Field name="FirstName" placeholder='First Name' component={renderField} 
                          validate={[required]}
@@ -80,6 +155,8 @@ render(){
                     <Field name="Email" keyboardType="email-address" placeholder='Email' component={renderField} 
                         validate={[required,isValidEmail]}
                     />
+                    <Button title="Choose File" onPress={this.chooseFile.bind(this)} />
+
                     <Field name="Password" keyboardType='default' placeholder='Password' secureTextEntry={true} component={renderField}
                         validate={[required,isValidPassword]} 
                     />
@@ -98,16 +175,16 @@ render(){
     }
 }
 
-const mapStateToProps=state=>{
-    return{
-     //user:state.form
+const mapStateToProps = (state) => {
+    return {
+        isloading:state.auth.loading
     }
-  }
+}
   const SignUp=reduxForm({
       form:'contact',
   })(RegisterForm)
 //   export default SignUp;
-export default connect(null,{auth})(SignUp);
+export default connect(mapStateToProps,{auth})(SignUp);
 
 const styles=StyleSheet.create({
     container: {

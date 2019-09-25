@@ -16,7 +16,6 @@ class WrapupDeliver extends Component{
         }
     }
 handleFinish=()=>{
-    console.log("Finish Work");
     this.props.wrapupdelivery();
     Actions.Status();
 }

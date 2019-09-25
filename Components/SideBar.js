@@ -2,8 +2,9 @@ import React,{Component} from "react";
 // import MenuDrawer from 'react-native-side-drawer';
 import {View,StyleSheet,Text,TouchableOpacity,Image} from 'react-native';
 import {Actions} from 'react-native-router-flux';
+import {connect} from 'react-redux';
 
-export default class SideBar extends Component{
+class SideBar extends Component{
     constructor(props) {
         super(props);
 
@@ -14,8 +15,15 @@ export default class SideBar extends Component{
             <View style={styles.container}>
                 <View style={{flex:1,backgroundColor:'#000',paddingBottom:50}}>
                     <View style={{flexDirection:'row'}}>
-                        <Image source={require('../Assets/profile.png') } style={{height:100, width:100,alignContent:'flex-start',alignSelf:'flex-start',borderRadius:50,paddingTop:50}}/>
-                        <Text style={{color:'white',paddingTop:50,fontWeight:'bold',fontSize:16}}>Jayashan Thivanka</Text>
+                    {this.props.imgUrl!=null ? 
+                            <View >
+                                <Image source={{uri:this.props.imgUrl}} style={{height:100, width:100,alignContent:'flex-start',alignSelf:'flex-start',borderRadius:50,marginTop:50}}/>
+                            </View>:
+                            <View >
+                                <Image source={require('../Assets/profile.png') } style={{height:100, width:100,alignContent:'flex-start',alignSelf:'flex-start',borderRadius:50,marginTop:50}}/>
+                            </View>}
+                        
+                        <Text style={{color:'white',marginTop:100,fontWeight:'bold',fontSize:16}}>{this.props.name}</Text>
                     </View>
                 </View>
                 <View style={{flex:3}}>
@@ -54,6 +62,14 @@ export default class SideBar extends Component{
         );
     }
 };
+
+const mapStateToProps = (state) => {
+    return {
+        imgUrl: state.auth.profImage,
+        name:state.auth.name
+    }
+}
+export default connect(mapStateToProps,null)(SideBar)
 
 const styles = StyleSheet.create({
     container: {

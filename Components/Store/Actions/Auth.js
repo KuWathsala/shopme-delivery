@@ -1,7 +1,7 @@
 import * as ActionTypes from './ActionType';
 import axios from 'axios';
 import { Actions,ActionConst } from 'react-native-router-flux';
-import {AsyncStorage} from 'react-native';
+import {AsyncStorage,ActivityIndicator} from 'react-native';
 import store from '../Store';
 import {connect} from 'react-redux';
 //import {fetchOrderData} from './Location';
@@ -19,13 +19,14 @@ export const checkAuthTImeout=(expirationTime)=>{
 };
 };
 
-export const authSuccess=(token,userId,role)=>{
+export const authSuccess=(token,userId,role,image,name)=>{
     return{
         type:ActionTypes.AUTH_SUCCESS,
         idToken:token,
         userId:userId,
         role:role,
-        
+        profImage:image,
+        name:name
         
     };
 
@@ -50,12 +51,13 @@ export const auth=(authData)=>{
                 .then(response=>{
             console.log(response);
             window.alert('Succesfully Registered')
-            dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role));
+            dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role,response.data.image));
             Actions.login();
             dispatch(checkAuthTImeout(3600/*response.data.expiresIn*/));
         })
         .catch(err=>{
             console.log(err);
+            window.alert('Email already in use');
             dispatch(authFail(err));
         });
     }
@@ -91,18 +93,21 @@ export const authVerify=(email,password)=>{
            console.log(response);
            const expirationDate=new Date(new Date().getTime()+/*response.data.expiresIn*/3600*10000);
             if(response.data.role=='Deliverer')
-                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role)));
+                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role,response.data.data.profileImage,response.data.data.firstName+''+response.data.data.lastName)));
                     AsyncStorage.setItem("token",response.data.data.token);
                     AsyncStorage.setItem("userId",response.data.data.id.toString());
                     AsyncStorage.setItem("expirationDate",expirationDate);
                     AsyncStorage.setItem("role",response.data.role);
-                    console.log(response.data.data.id);
+                    AsyncStorage.setItem("proImage",response.data.data.profileImage);
+                    AsyncStorage.setItem("name",response.data.data.firstName+''+response.data.data.lastName);
+                    console.log(response.data.data.firstName+''+response.data.data.lastName);
                     Actions.Status()
                 } else
                     window.alert('You are not a Deliverer person')
         })
         .catch(err=>{
             console.log("error");
+            window.alert('Username or password incorrect!');
             console.log(err);
             dispatch(authFail(err));
         });
@@ -116,6 +121,18 @@ export const authCheckState=()=>{
         AsyncStorage.getItem("token").then((value) => {
             token=value;
             console.log(token);
+            }).done();
+
+        let profImage
+        AsyncStorage.getItem("proImage").then((value) => {
+            profImage=value;
+            console.log(profImage);
+            }).done();
+
+        let name
+        AsyncStorage.getItem("name").then((value) => {
+            name=value;
+            console.log(name);
             }).done();
             
             let deliverId;
@@ -157,9 +174,9 @@ export const authCheckState=()=>{
     //         }
         else{
             if(!deliverId){
-                dispatch(authSuccess(token,userId,role),Actions.Status());
+                dispatch(authSuccess(token,userId,role,profImage,name),Actions.Status());
             }else{
-                   dispatch(authSuccess(token,userId,role),Actions.UnfinishDelivery());
+                   dispatch(authSuccess(token,userId,role,profImage,name),Actions.UnfinishDelivery());
                 
             }                //dispatch(checkAuthTImeout((expirationDate.getTime()-new Date().getTime())/1000));
             }

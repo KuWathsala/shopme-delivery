@@ -1,12 +1,4 @@
-// {"expo":{
-//   "name": "SMD",
-//   "displayName": "SMD",
-//   "version": "0.0.1",
-//   "sdkVersion":"28.0.3",
-//   "description":"gfgfgfgfg",
-//   "android":{"package":"com.jayashan"}
-// }}
 {
     "name": "SMD",
-    "displayName": "SMD"
+    "displayName": "ShopMe-delivery"
 }

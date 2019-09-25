@@ -32,7 +32,7 @@ export const fetchOrderData=(object,id)=>{
     console.log("object")
     console.log(object)
     let data= {
-        products:{...object.products},
+        products:object.products,
         sourceLocation:{
             latitude: 6.837673280321542,
             longitude: 79.90480335265398
