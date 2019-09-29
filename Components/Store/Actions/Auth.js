@@ -133,7 +133,7 @@ export const authCheckState=()=>{
         AsyncStorage.getItem("name").then((value) => {
             name=value;
             console.log(name);
-            }).done();
+            }).done();  
             
             let deliverId;
             AsyncStorage.getItem("DeliverId").then((value) => {

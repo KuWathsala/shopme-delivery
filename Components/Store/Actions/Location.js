@@ -10,10 +10,19 @@ export const location=(latitude,longitude)=>{
         };
 };
 
+export const startLocation=(latitude,longitude)=>{
+    return{
+        type:ActionTypes.START_LOCATION,
+        latitude:latitude,
+        longitude:longitude
+        };
+};
+
 export const isReach=(isReach)=>{
     return{
         type:ActionTypes.REACH_SHOP,
         isReach:isReach
+        
     };
 }
 

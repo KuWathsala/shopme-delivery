@@ -1,7 +1,7 @@
 export {
     location,
     isReach,
-
+    startLocation,
  }from './Location'
 
  export{

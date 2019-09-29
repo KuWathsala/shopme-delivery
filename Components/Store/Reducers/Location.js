@@ -1,5 +1,6 @@
 import * as actionTypes from '../Actions/ActionType';
 import {updateObject} from '../utility';
+import {AsyncStorage} from 'react-native'
 
 const initialState={
     products:[],
@@ -8,12 +9,16 @@ const initialState={
         longitude: 79.90480335265398
     },
     shopLocation:{
-        latitude: 6.877673280321542,
-        longitude: 79.93480335265398
+        latitude: 6.837673280321542,
+        longitude: 79.90480335265398
     },
     customerLocation:{
-        latitude:6.873673280321542,
-        longitude:79.92480335265398
+        latitude:6.837673280321542,
+        longitude:79.90480335265398
+    },
+    InitialLocation:{
+        latitude:6.78,
+        longitude:79.12
     },
     isReach:false,
     shopName: '',
@@ -29,7 +34,17 @@ const currentLocation=(state,action)=>{
     })
 }
 
+const startLocation=(state,action)=>{
+    return updateObject(state,{
+        InitialLocation:{
+            latitude:action.latitude,
+            longitude:action.longitude
+        }
+    })
+}
+
 const reachShop=(state,action)=>{
+    AsyncStorage.setItem("ReachShop","true");
     console.log("ISREACHEDDDD");
     return updateObject(state,{
         isReach:action.isReach
@@ -40,6 +55,7 @@ const reducer=(state=initialState,action)=>{
     switch(action.type){
         case actionTypes.CURRENT_LOCATION:return currentLocation(state,action);
         case actionTypes.REACH_SHOP:return reachShop(state,action);
+        case actionTypes.START_LOCATION:return startLocation(state,action);
         case actionTypes.ORDER_DATA_SUCCESS:
             return { ...state, 
                 products:action.payload.products,
@@ -56,7 +72,8 @@ const reducer=(state=initialState,action)=>{
             //         shopName: null,
             //         customer: null,
             //         customerLocation: null//customer location must change
-            //     };  
+            //     }; 
+            
         default:return state;
     }
 }

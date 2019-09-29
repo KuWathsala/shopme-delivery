@@ -3,7 +3,7 @@ import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,Alert,Linking,Keyb
 import {connect} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
 //import * as actions from '../Store/Actions/index';
-import {fetchOrderData} from './Store/Actions/Location';
+import {fetchOrderData,isReach} from './Store/Actions/Location';
 import axios from 'axios';
 import {AsyncStorage} from 'react-native';
 
@@ -16,17 +16,26 @@ class UnfinishedDelivery extends Component{
     }
     
 componentDidMount(){
+    let ReachShop=false;
+    AsyncStorage.getItem("ReachShop").then((value) => {
+        if(value=="true")
+            {ReachShop=true;
+            console.log(ReachShop);}
+        else
+        console.log(ReachShop);
+        }).done();  
+        
     AsyncStorage.getItem("DeliverId").then((value) => {
         this.setState({deliverId:value})
         console.log(this.state.deliverId);
         }).done();
-        console.log("axiooos")
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
         sleep(1000).then(() => {
         axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliverId}`)
                     .then(response=>{
                         console.log(response.data);
-                       this.props.fetchOrderData(response.data); // fetch order details
+                       this.props.fetchOrderData(response.data);
+                       this.props.isReach(ReachShop); // fetch order details
                        
                     })
                     Actions.Map();
@@ -42,4 +51,4 @@ componentDidMount(){
     }
 }
 
-export default connect(null,{fetchOrderData})(UnfinishedDelivery)
+export default connect(null,{fetchOrderData,isReach})(UnfinishedDelivery)

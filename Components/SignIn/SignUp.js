@@ -52,15 +52,8 @@ chooseFile = () => {
             console.log('User tapped custom button: ', response.customButton);
             alert(response.customButton);
           } else {
-            let source = response;
-            // You can also display the image using data:
-            // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-            
-            this.setState({
-              filePath: source,
-            });
             const formData = new FormData();
-            formData.append("file", response);
+            formData.append("file",{uri:response.uri,type:response.type,name:response.fileName});
             formData.append('api_key', 'N0iPhJFusPjArpBfPbui9j8MkEs');
             formData.append("upload_preset", 'm0uhbhzz');
             axios.post('https://api.cloudinary.com/v1_1/dubnsitvx/image/upload',formData,{
@@ -71,7 +64,7 @@ chooseFile = () => {
     .then(res=>{
         console.log(res)
         console.log(res.data.url);
-        Imgurl=res.data.url;
+        this.setState({imgurl:res.data.url})
     })
     .catch(err=>{
         console.log(err)
@@ -93,6 +86,7 @@ submit=(values)=> {
         LastName:values.LastName,
         MobileNumber:values.MobileNumber,
         VehicleNo:values.VehicleNo,
+        ProfileImage:this.state.imgurl,
         VehicleType:"Three Wheel",
         returnSecureToken: true,
       }
@@ -155,7 +149,6 @@ render(){
                     <Field name="Email" keyboardType="email-address" placeholder='Email' component={renderField} 
                         validate={[required,isValidEmail]}
                     />
-                    <Button title="Choose File" onPress={this.chooseFile.bind(this)} />
 
                     <Field name="Password" keyboardType='default' placeholder='Password' secureTextEntry={true} component={renderField}
                         validate={[required,isValidPassword]} 
@@ -163,6 +156,13 @@ render(){
                     <Field name="ConfirmPassword" keyboardType='default' placeholder='Confirm Password' secureTextEntry={true} component={renderField}
                         validate={[required,passwordMatch]} 
                     />
+            
+                    <TouchableOpacity onPress={this.chooseFile.bind(this)} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
+                            <Text style={{
+                                backgroundColor:'grey',color:'white',fontSize:16,
+                                height:37,width:'100%',textAlign:'center',padding:10
+                            }}>Choose Profile Image</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={handleSubmit(this.submit)} disabled={submitting} style={{margin:5,alignSelf:'stretch'}}>
                             <Text style={{
                                 backgroundColor:'steelblue',color:'white',fontSize:16,

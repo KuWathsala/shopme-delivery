@@ -2,9 +2,24 @@ import React, {Component} from 'react';
 import {Text,View,StyleSheet,ScrollView,Image} from 'react-native';
 import Card from './Card';
 import {connect} from 'react-redux';
+import axios from 'axios';
 
 class Profile extends Component{
-    
+    constructor(props){
+        super(props);
+        this.state={
+            Deliveries:[]
+        }
+    }
+
+componentDidMount(){
+    axios.post(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/getAllOrderDetailsByDeliverer/${this.props.deliverId}`)
+                    .then(response=>{
+                        console.log(response);
+                        this.setState({Deliveries:response.data});
+                    })
+                    .catch(error=>{console.log(error)})
+}
     render(){
         return(
             <ScrollView>
@@ -21,10 +36,34 @@ class Profile extends Component{
                         shadowOpacity: 0.2,}}>
                             {this.props.imgUrl!=null ? 
                             <View >
-                                <Image source={{uri:this.props.imgUrl}} style={{flexDirection:'row',height:150, width:150,backgroundColor:'white',alignContent:'center',alignSelf:'center',justifyContent:'flex-end',borderRadius:100,padding:50,marginTop:10}}/>
+                                <Image 
+                                    source={{uri:this.props.imgUrl}} 
+                                    style={{
+                                        flexDirection:'row',
+                                        height:150, 
+                                        width:150,
+                                        backgroundColor:'white',
+                                        alignContent:'center',
+                                        alignSelf:'center',
+                                        justifyContent:'flex-end',
+                                        borderRadius:100,
+                                        padding:50,
+                                        marginTop:10}}/>
                             </View>:
                             <View >
-                                <Image source={require('../../Assets/profile.png')} style={{flexDirection:'row',height:150, width:150,backgroundColor:'white',alignContent:'center',alignSelf:'center',justifyContent:'flex-end',borderRadius:100,padding:50,marginTop:10}}/>
+                                <Image 
+                                source={require('../../Assets/profile.png')} 
+                                style={{
+                                    flexDirection:'row',
+                                    height:150, 
+                                    width:150,
+                                    backgroundColor:'white',
+                                    alignContent:'center',
+                                    alignSelf:'center',
+                                    justifyContent:'flex-end',
+                                    borderRadius:100,
+                                    padding:50,
+                                    marginTop:10}}/>
                             </View>}
                 </View>
 
@@ -38,7 +77,8 @@ class Profile extends Component{
 }
 const mapStateToProps = (state) => {
     return {
-        imgUrl: state.auth.profImage
+        imgUrl: state.auth.profImage,
+        deliverId: state.auth.userId
     }
 }
 export default connect(mapStateToProps,null)(Profile);

@@ -1,12 +1,11 @@
 import React,{Component} from "react";
-import { View, Text, Image, StyleSheet,TouchableOpacity} from "react-native";
+import { View, Text, Image, StyleSheet,TouchableOpacity,} from "react-native";
 import MapView, {PROVIDER_GOOGLE, Marker, Circle} from 'react-native-maps';
 import {connect} from 'react-redux';
 import Geolocation from '@react-native-community/geolocation';
 import MapViewDirections from 'react-native-maps-directions';
 import * as actions from '../Store/Actions/index';
 import {Actions} from 'react-native-router-flux';
-import Button from "react-native-button";
 
 const carMarker=require("../../Assets/carMarker.png") ;
 const shopMarker=require("../../Assets/shop.png") ;
@@ -32,18 +31,24 @@ class Map extends Component{
 
 
   
-  componentDidMount(){
+componentDidMount(){
     Geolocation.getCurrentPosition(
       position=> {
         console.log('position->',position);
+        // this.setState({
+        //   startLocation:{
+        //     latitude: position.coords.latitude,
+        //     longitude: position.coords.longitude,
+        //   },
+        //   source:{
+        //     latitude:position.coords.latitude,
+        //     longitude:position.coords.longitude,
+        //   },
+        //   error:null,
+        // });
         this.props.setLocation(position.coords.latitude,position.coords.longitude);
-        this.setState({
-          startLocation:{
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-          error:null,
-        });
+        this.props.InitializeLocation(position.coords.latitude,position.coords.longitude);
+        console.log("Start location changed.....");
       },
       error=> {this.setState({error: error.message })},
       { enableHighAccuracy: true},
@@ -60,7 +65,8 @@ class Map extends Component{
               },
               error:null,
             });
-            this.props.setLocation(this.state.source.latitude,this.state.source.longitude);
+            this.props.setLocation(position.coords.latitude,position.coords.longitude);
+            console.log("Start location not changed.....");
           },
           error=> {this.setState({error: error.message })},
           //{ enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000 },
@@ -146,8 +152,8 @@ class Map extends Component{
 
         <Marker
             coordinate={{
-              latitude:this.state.startLocation.latitude,
-              longitude:this.state.startLocation.longitude,
+              latitude:this.props.startLocation.latitude,
+              longitude:this.props.startLocation.longitude,
             }}
             pinColor='#FB6910'
           />
@@ -187,14 +193,38 @@ class Map extends Component{
             }}
           />
           {/*start location to delivrer current location path*/}
-          <MapViewDirections
-            origin={this.state.startLocation}
+          {this.props.isReached  ? 
+            <MapViewDirections
+            origin={this.props.startLocation}
+            destination={this.props.shopLocation}
+            apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+            strokeWidth={7}
+            strokeColor="#605650"
+            fillColor="#FB6910"
+          />
+          :
+            <MapViewDirections
+            origin={this.props.startLocation}
             destination={this.props.sourceLocation}
             apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
             strokeWidth={7}
             strokeColor="#605650"
             fillColor="#FB6910"
           />
+          }
+
+          {this.props.isReached ? 
+          <MapViewDirections
+          origin={this.props.shopLocation}
+          destination={this.props.sourceLocation}
+          apikey={'AIzaSyDfp50rT_iIa365h388F4TjLEWBS39S2kM'}
+          strokeWidth={7}
+          strokeColor="#605650"
+          fillColor="#FB6910"
+         />
+        :null}
+          
+          
         {/*shop to customer path*/}
           {(this.props.isReached ) ?
           <MapViewDirections
@@ -206,7 +236,7 @@ class Map extends Component{
             fillColor="#FB6910"
           />:null}
           {isReachedShop && !this.props.isReached ? (this.reachShop()):null}
-          {isFinish ?( Actions.WrapupDeliver(),console.log('Finish journeyyyyy')):null}
+          {isFinish && this.props.isReached ?( Actions.WrapupDeliver(),console.log('Finish journeyyyyy')):null}
           </MapView >
         </View>
        </View>
@@ -219,13 +249,16 @@ const mapStateToProps=state=>{
     shopLocation:state.location.shopLocation,
     customerLocation:state.location.customerLocation,
     sourceLocation:state.location.sourceLocation,
+    startLocation:state.location.InitialLocation,
     isReached:state.location.isReach,
   }
 }
 
 const mapDispatchToProps=dispatch=>{
   return{
-      setLocation:(latitude,longitude)=>dispatch(actions.location(latitude,longitude))
+      InitializeLocation:(latitude,longitude)=>dispatch(actions.startLocation(latitude,longitude)),
+      setLocation:(latitude,longitude)=>dispatch(actions.location(latitude,longitude)),
+      
   };
 }
 
