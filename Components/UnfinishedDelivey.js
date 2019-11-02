@@ -45,7 +45,7 @@ componentDidMount(){
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
         sleep(2000).then(() => {
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliverId}`)
+        axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliverId}`)
                     .then(response=>{
                       //  console.log(response.data);
                       this.props.startLocation(this.state.start_lat,this.state.start_lng);  

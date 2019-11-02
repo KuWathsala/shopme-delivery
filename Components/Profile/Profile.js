@@ -13,7 +13,7 @@ class Profile extends Component{
     }
 
 componentDidMount(){
-    axios.post(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/getAllOrderDetailsByDeliverer/${parseInt(this.props.deliverId)}`)
+    axios.post(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/getAllOrderDetailsByDeliverer/${parseInt(this.props.deliverId)}`)
                     .then(response=>{
                         console.log(response);
                         this.setState({Deliveries:response.data});

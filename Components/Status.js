@@ -17,7 +17,7 @@ class Status extends Component{
             isOnline:false,
             visible: false,
             ismodalvisible:true,
-            connection: new signalR.HubConnectionBuilder().withUrl("https://backend-webapi20190825122524.azurewebsites.net/connectionHub").build(),
+            connection: new signalR.HubConnectionBuilder().withUrl("https://backend-webapi20191102020215.azurewebsites.net/connectionHub").build(),
             message:null,
             accept: false,
             delivererId:parseInt(this.props.deliverId), //deliverer Id
@@ -85,7 +85,7 @@ class Status extends Component{
     }
 
     handleDelivery=()=>{
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliveryId}`)
+        axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliveryId}`)
                     .then(response=>{
                         console.log(response.data);
                         this.setState({OrderData:response.data});
@@ -107,7 +107,7 @@ class Status extends Component{
             this.state.connection.invoke("SendRequest");
             this.state.connection.on("SendRequest",(message)=>{
                 console.log(message);
-                axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${message}`)
+                axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/GetOrderDetailsById/${message}`)
                     .then(response=>{
                         console.log(response.data);
                         this.setState({OrderData:response.data});
@@ -118,14 +118,14 @@ class Status extends Component{
             })
 
             let delivererStatus='online';
-            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+            axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
             .then(response=>{
                 console.log(response.data);
             })
         }
         else {
             let delivererStatus='offline';
-            axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+            axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
             .then(response=>{
                 console.log(response.data);
             })
@@ -136,26 +136,26 @@ class Status extends Component{
         this.setState({accept: true}),console.log(this.state.accept);
         let orderStatus='to be delivered';
         let delivererStatus='onroad';
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/updateOrderStatus/${this.state.message},${orderStatus}`)
+        axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/updateOrderStatus/${this.state.message},${orderStatus}`)
         .then(response=>{
             console.log(response.data);
         })
         .catch(error=>{console.log(error)})
         console.log(delivererStatus, orderStatus)
 
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
+        axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/deliverers/updateDeliveryStatus/${this.state.delivererId},${delivererStatus}`)
         .then(response=>{
             console.log(response.data);
         })
         .catch(error=>{console.log(error)})
 
-        axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/Orders/orderCongirmed/${this.state.message},${this.state.delivererId}`)
+        axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/Orders/orderCongirmed/${this.state.message},${this.state.delivererId}`)
         .then(response=>{
             console.log(response.data);
         })
         .catch(error=>{console.log(error)})
     
-        //axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.message}`)
+        //axios.get(`https://backend-webapi20191102020215.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.message}`)
         //.then(response=>{
             //console.log(response.data);
             this.props.fetchOrderData(this.state.OrderData,this.state.message); // fetch order details

@@ -47,7 +47,7 @@ export const auth=(authData)=>{
         console.log("auth : ",authData);
         let url='';
             console.log(authData.role);
-            url='https://backend-webapi20190825122524.azurewebsites.net/api/UserAuth/Signup-Deliverer';
+            url='https://backend-webapi20191102020215.azurewebsites.net/api/UserAuth/Signup-Deliverer';
             axios.post(url,authData)
                 .then(response=>{
             console.log(response);
@@ -88,7 +88,7 @@ export const authVerify=(email,password)=>{
             returnSecureToken: true
         };
         
-        let url='https://backend-webapi20190825122524.azurewebsites.net/api/UserAuth/signin';
+        let url='https://backend-webapi20191102020215.azurewebsites.net/api/UserAuth/signin';
         axios.post(url,authVerifyData)
         .then(response=>{
            console.log(response);
