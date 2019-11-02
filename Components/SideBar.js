@@ -24,6 +24,7 @@ class SideBar extends Component{
                             </View>}
                         
                         <Text style={{color:'white',marginTop:100,fontWeight:'bold',fontSize:16}}>{this.props.name}</Text>
+                        <Text style={{color:'white',fontWeight:'bold',fontSize:16}}>{this.props.contactNo}</Text>
                     </View>
                 </View>
                 <View style={{flex:3}}>
@@ -31,7 +32,7 @@ class SideBar extends Component{
                         <Text style={{
                             backgroundColor:'white',color:'#000',fontSize:20,
                             height:45,width:'100%',textAlign:'left',padding:10
-                        }}>Profile</Text>
+                        }}>Prvious Jobs</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>Actions.Map()} style={{alignItems:'center',paddingTop:10,paddingBottom:10}}>
                         <Text style={{
@@ -51,7 +52,7 @@ class SideBar extends Component{
                             height:45,width:'100%',textAlign:'left',padding:10
                         }}>Register</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>Actions.logout()} style={{alignItems:'center',paddingTop:10,paddingBottom:10}}>
+                    <TouchableOpacity onPress={()=>Actions.logout()} style={{alignItems:'center',paddingTop:10,paddingBottom:10,}}>
                         <Text style={{
                             backgroundColor:'white',color:'#000',fontSize:20,
                             height:45,width:'100%',textAlign:'left',padding:10
@@ -66,7 +67,8 @@ class SideBar extends Component{
 const mapStateToProps = (state) => {
     return {
         imgUrl: state.auth.profImage,
-        name:state.auth.name
+        name:state.auth.name,
+        contactNo:state.auth.contactNo
     }
 }
 export default connect(mapStateToProps,null)(SideBar)
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'stretch',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: 'white',
     },
 
 });

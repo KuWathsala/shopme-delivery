@@ -13,8 +13,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Store from './Components/Store/Store';
 import {Provider} from 'react-redux';
 import Router from './Components/Router';
-import SingalR from './SingalR';
 import Net from './Components/Net'
+
 class App extends Component {
   constructor(props) {
     super(props);

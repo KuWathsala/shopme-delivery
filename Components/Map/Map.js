@@ -35,20 +35,7 @@ componentDidMount(){
     Geolocation.getCurrentPosition(
       position=> {
         console.log('position->',position);
-        // this.setState({
-        //   startLocation:{
-        //     latitude: position.coords.latitude,
-        //     longitude: position.coords.longitude,
-        //   },
-        //   source:{
-        //     latitude:position.coords.latitude,
-        //     longitude:position.coords.longitude,
-        //   },
-        //   error:null,
-        // });
         this.props.setLocation(position.coords.latitude,position.coords.longitude);
-        this.props.InitializeLocation(position.coords.latitude,position.coords.longitude);
-        console.log("Start location changed.....");
       },
       error=> {this.setState({error: error.message })},
       { enableHighAccuracy: true},
@@ -66,7 +53,6 @@ componentDidMount(){
               error:null,
             });
             this.props.setLocation(position.coords.latitude,position.coords.longitude);
-            console.log("Start location not changed.....");
           },
           error=> {this.setState({error: error.message })},
           //{ enableHighAccuracy: false, timeout: 25000, maximumAge: 3600000 },
@@ -96,15 +82,20 @@ componentDidMount(){
     }
     return(
       <View style={styles.container}>
-        <View style={{flexDirection:'row',alignContent:'space-around',marginTop:5,marginBottom:5}}>
+        <View style={{flexDirection:'row',alignContent:'stretch',marginTop:5,marginBottom:5}}>
             <TouchableOpacity onPress={()=>Actions.GetOrder()}>
               <View style={{height:30,width:150,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,marginRight:5}}>
                   <Text style={{fontSize:15,fontWeight:'bold',alignSelf:'center',color:'white'}}>Delivery Details</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>Actions.Profile()}>
-              <View style={{height:30,width:150,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,}}>
+              <View style={{height:30,width:150,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,marginRight:5}}>
                   <Text style={{fontSize:15,fontWeight:'bold',alignSelf:'center',color:'white',marginRight:5}}>Past Trips</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>null}>
+              <View style={{height:30,width:130,backgroundColor:'#18CF0B',borderColor:'#fff',borderRadius:5,}}>
+                  <Text style={{fontSize:15,fontWeight:'bold',alignSelf:'center',color:'white',marginLeft:5}}>Cancel</Text>
               </View>
             </TouchableOpacity>
         </View>
@@ -256,7 +247,6 @@ const mapStateToProps=state=>{
 
 const mapDispatchToProps=dispatch=>{
   return{
-      InitializeLocation:(latitude,longitude)=>dispatch(actions.startLocation(latitude,longitude)),
       setLocation:(latitude,longitude)=>dispatch(actions.location(latitude,longitude)),
       
   };

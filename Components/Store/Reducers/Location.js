@@ -45,7 +45,13 @@ const startLocation=(state,action)=>{
 
 const reachShop=(state,action)=>{
     AsyncStorage.setItem("ReachShop","true");
-    console.log("ISREACHEDDDD");
+    console.log("ISREACHEDDDD workeddd");
+    return updateObject(state,{
+        isReach:action.isReach
+    })
+}
+
+const finishOrder=(state,action)=>{
     return updateObject(state,{
         isReach:action.isReach
     })
@@ -56,6 +62,7 @@ const reducer=(state=initialState,action)=>{
         case actionTypes.CURRENT_LOCATION:return currentLocation(state,action);
         case actionTypes.REACH_SHOP:return reachShop(state,action);
         case actionTypes.START_LOCATION:return startLocation(state,action);
+        case actionTypes.FINISH_ORDER:return finishOrder(state,action);
         case actionTypes.ORDER_DATA_SUCCESS:
             return { ...state, 
                 products:action.payload.products,

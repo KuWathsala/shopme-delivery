@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity,ScrollView} from "react-native";
+import { View, Text, Dimensions, Image, StyleSheet,TouchableOpacity,ScrollView,ImageBackground} from "react-native";
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
 import * as actions from '../Components/Store/Actions/index';
@@ -33,8 +33,10 @@ orders=()=>{
     }
     render(){
         return(
-            <ScrollView style={{flex: 1,backgroundColor:'#E7E7DF'}}>
-            <View style={{backgroundColor:'#E7E7DF'}}>
+            <ImageBackground source={require('../Assets/cart.jpeg')}  style={{width: '100%', height: '100%',resizeMode: 'cover'}} imageStyle={{opacity:0.5}}>
+            <ScrollView>
+            {/* <Image source={require('../Assets/cart.jpeg')} style={styles.backgroundImage} style={{backgroundImage: {flex: 1,resizeMode: 'cover',}}}></Image> */}
+            <View style={{flex:1,height:'100%'}}> 
                 
                 <Text style={{fontSize: 50,color: '#26bf63',fontWeight:'400', fontWeight:'bold',marginTop:15,alignSelf:'center'}}>
                     shop
@@ -52,7 +54,7 @@ orders=()=>{
                     <Text style={{flex: 1, alignSelf: 'stretch',color:'yellow',fontSize:20,fontWeight:'bold'}}>Quanity</Text> */}
                 </View>
                 {this.orders()}
-                <TouchableOpacity onPress={()=>this.orderConfirmHandeler()} style={{margin:10,alignSelf:'stretch',marginTop:40,justifyContent:'flex-end'}}>
+                <TouchableOpacity onPress={()=>this.orderConfirmHandeler()} style={{flex:1,justifycontent:'flex-end',margin:10,alignSelf:'stretch',marginTop:40}}>
                         <Text style={{
                             backgroundColor:'steelblue',color:'#272726',fontSize:16,
                             height:37,width:'100%',textAlign:'center',padding:10
@@ -60,6 +62,7 @@ orders=()=>{
                     </TouchableOpacity>
             </View>
             </ScrollView>
+            </ImageBackground>
         );
     };
 }
@@ -73,7 +76,7 @@ const mapStateToProps=state=>{
   }
   const mapDispatchToProps=dispatch=>{
     return{
-        setReach:(reach)=>dispatch(actions.isReach(reach),console.log("SetReach"))
+        setReach:(reach)=>dispatch(actions.isReach(reach))
     };
   }
 export default connect(mapStateToProps,mapDispatchToProps)(GetOrder);

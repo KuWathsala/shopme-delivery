@@ -19,14 +19,15 @@ export const checkAuthTImeout=(expirationTime)=>{
 };
 };
 
-export const authSuccess=(token,userId,role,image,name)=>{
+export const authSuccess=(token,userId,role,image,name,contactno)=>{
     return{
         type:ActionTypes.AUTH_SUCCESS,
         idToken:token,
         userId:userId,
         role:role,
         profImage:image,
-        name:name
+        name:name,
+        contactNo:contactno
         
     };
 
@@ -93,13 +94,14 @@ export const authVerify=(email,password)=>{
            console.log(response);
            const expirationDate=new Date(new Date().getTime()+/*response.data.expiresIn*/3600*10000);
             if(response.data.role=='Deliverer')
-                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role,response.data.data.profileImage,response.data.data.firstName+''+response.data.data.lastName)));
+                {(dispatch(authSuccess(response.data.data.token,response.data.data.id,response.data.role,response.data.data.profileImage,response.data.data.firstName+''+response.data.data.lastName,response.data.data.mobileno)));
                     AsyncStorage.setItem("token",response.data.data.token);
                     AsyncStorage.setItem("userId",response.data.data.id.toString());
                     AsyncStorage.setItem("expirationDate",expirationDate);
                     AsyncStorage.setItem("role",response.data.role);
                     AsyncStorage.setItem("proImage",response.data.data.profileImage);
                     AsyncStorage.setItem("name",response.data.data.firstName+''+response.data.data.lastName);
+                    AsyncStorage.setItem("contactNo",response.data.data.mobileno);
                     console.log(response.data.data.firstName+''+response.data.data.lastName);
                     Actions.Status()
                 } else
@@ -154,6 +156,12 @@ export const authCheckState=()=>{
                 //this.setState({"role": value});
                 }).done();
         
+        let contactNo;
+        AsyncStorage.getItem("contactNo").then((value) => {
+                    console.log('role'+value);
+                    contactNo=value;
+                        //this.setState({"role": value});
+                        }).done();
                 
 
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -162,21 +170,12 @@ export const authCheckState=()=>{
             console.log("error dispatching");
             dispatch(logout(),Actions.login());
         }
-    //     }else{
-        
-    // AsyncStorage.getItem("expirationDate").then((value) => {
-    //             const expirationDate=new Date(value);
-    //             console.log('date'+value);
-    //             }).done();
-        
-    //     if(expirationDate<=new Date()){
-    //             dispatch(logout());
-    //         }
         else{
             if(!deliverId){
-                dispatch(authSuccess(token,userId,role,profImage,name),Actions.Status());
+                dispatch(authSuccess(token,userId,role,profImage,name,contactNo)).then(Actions.Status());
+                
             }else{
-                   dispatch(authSuccess(token,userId,role,profImage,name),Actions.UnfinishDelivery());
+                   dispatch(authSuccess(token,userId,role,profImage,name,contactNo),Actions.UnfinishDelivery());
                 
             }                //dispatch(checkAuthTImeout((expirationDate.getTime()-new Date().getTime())/1000));
             }

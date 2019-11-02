@@ -8,13 +8,15 @@ const initialState={
     loading:false,
     userType:null,
     profImage:null,
-    name:null
+    name:null,
+    contactNo:null
 }
 const authstart =(state,action)=>{
     return updateObject(state,{error:null,loading:true})
 }
 
 const authSuccess=(state,action)=>{
+    console.log("auth sucessful");
     return updateObject(state,{error:null,
         token:action.idToken,
         userId:action.userId,

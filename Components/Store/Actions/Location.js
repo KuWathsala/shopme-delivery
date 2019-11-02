@@ -11,10 +11,12 @@ export const location=(latitude,longitude)=>{
 };
 
 export const startLocation=(latitude,longitude)=>{
+    console.log("Start Location......");
     return{
         type:ActionTypes.START_LOCATION,
         latitude:latitude,
-        longitude:longitude
+        longitude:longitude,
+        
         };
 };
 
@@ -38,8 +40,7 @@ export const OrderDataSuccess=(json)=>({
 }); 
 
 export const fetchOrderData=(object,id)=>{
-    console.log("object")
-    console.log(object)
+    console.log("fetchOrder");
     let data= {
         products:object.products,
         sourceLocation:{
@@ -78,4 +79,5 @@ export const wrapupdelivery=()=>{
 
 export const FinishOrder=()=>({
     type: ActionTypes.FINISH_ORDER,
+    isReach:false,
 });

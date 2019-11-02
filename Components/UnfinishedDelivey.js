@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Text,View,StyleSheet,TextInput,Image,TouchableOpacity,Alert,Linking,KeyboardAvoidingView} from 'react-native';
 import {connect} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
-//import * as actions from '../Store/Actions/index';
-import {fetchOrderData,isReach} from './Store/Actions/Location';
+import * as actions from './Store/Actions/index';
+import {fetchOrderData,startLocation} from './Store/Actions/Location';
 import axios from 'axios';
 import {AsyncStorage} from 'react-native';
 
@@ -12,6 +12,8 @@ class UnfinishedDelivery extends Component{
         super(props);
         this.state = {
             deliverId:null,
+            start_lat:null,
+            start_lng:null,
         }
     }
     
@@ -26,29 +28,48 @@ componentDidMount(){
         }).done();  
         
     AsyncStorage.getItem("DeliverId").then((value) => {
-        this.setState({deliverId:value})
+        this.setState({deliverId:parseInt(value)})
         console.log(this.state.deliverId);
         }).done();
+
+    AsyncStorage.getItem("start_lat").then((value) => {
+        this.setState({start_lat:parseFloat(value)})
+        console.log(this.state.start_lat);
+        }).done();
+    
+    AsyncStorage.getItem("start_lng").then((value) => {
+        this.setState({start_lng:parseFloat(value)})
+        console.log(this.state.start_lng);
+        }).done();
+
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-        sleep(1000).then(() => {
+
+        sleep(2000).then(() => {
         axios.get(`https://backend-webapi20190825122524.azurewebsites.net/api/orders/GetOrderDetailsById/${this.state.deliverId}`)
                     .then(response=>{
-                        console.log(response.data);
+                      //  console.log(response.data);
+                      this.props.startLocation(this.state.start_lat,this.state.start_lng);  
                        this.props.fetchOrderData(response.data);
-                       this.props.isReach(ReachShop); // fetch order details
-                       
+                                            
                     })
                     Actions.Map();
                 });
 }
     render(){
         return(
-            null
-                    
-                   //dispatch(authSuccess(token,userId,role),Actions.Map())
-                
+            null  
         );
     }
 }
 
-export default connect(null,{fetchOrderData,isReach})(UnfinishedDelivery)
+const mapStateToProps=dispatch=>{
+    return{
+        //InitializeLocation:(latitude,longitude)=>dispatch(actions.startLocation(latitude,longitude)),
+       // setLocation:(latitude,longitude)=>dispatch(actions.startLocation(latitude,longitude),console.log("start location ...")),
+        //fetchOrder:(data)=>dispatch(actions.fetchOrderData(data),console.log("fetchOrder"))
+    };
+  }
+  
+
+export default connect(mapStateToProps,{
+    fetchOrderData,startLocation})(UnfinishedDelivery)
