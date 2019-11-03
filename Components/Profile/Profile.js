@@ -21,6 +21,14 @@ componentDidMount(){
                     .catch(error=>{console.log(error)})
 }
     render(){
+        const Orders=this.state.Deliveries.map(order=>{
+            return <Card date={order.order.createdAt} 
+                    shopname={order.seller.shopName} 
+                    customerlat={order.order.customerLatitude} 
+                    customerlng={order.order.customerLongitude} 
+                    shoplat={order.seller.shopLocationLatitude} 
+                    shoplng={order.seller.shopLocationLongitude}/>
+        });
         return(
             <ScrollView>
                 <View style={{
@@ -29,12 +37,13 @@ componentDidMount(){
                     justifyContent: 'center',
                     alignItems: 'stretch',
                 }}>
-                <View style={{height: 170, 
+                <View style={{height: 100, 
                         backgroundColor: 'steelblue',
                         shadowColor: '#000',
                         shadowOffset: { width: 0, height: 1000 },
                         shadowOpacity: 0.2,}}>
-                            {this.props.imgUrl!=null ? 
+                            <Text style={{justifyContent:'flex-start',alignSelf:'center',fontSize:25,color:'white',marginTop:40}}>Past Deliveries</Text>
+                            {/* {this.props.imgUrl!=null ? 
                             <View >
                                 <Image 
                                     source={{uri:this.props.imgUrl}} 
@@ -64,11 +73,11 @@ componentDidMount(){
                                     borderRadius:100,
                                     padding:50,
                                     marginTop:10}}/>
-                            </View>}
+                            </View>} */}
                 </View>
 
                 <View style={{flex:1, backgroundColor: 'powderblue',paddingVertical:5,}}>
-                    <Card/>
+                   {Orders}
                     </View>        
                 </View>
             </ScrollView>
